@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ISocketMessage, WebSocketService } from 'src/app/shared/services/socket.service';
+import { ISocketMessage, WebSocketService } from 'src/app/core/services/socket.service';
 
 @Component({
   selector: 'app-socket',
