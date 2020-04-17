@@ -4,6 +4,7 @@ import { APP_INITIALIZER, NgModule, Optional, SkipSelf } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { BackendService } from 'src/app/core/services/backend.service';
 import { CoreEffects } from 'src/app/core/services/core.effects.service';
 import { CoreStoreService } from 'src/app/core/services/core.store.service';
 import { getCoreReducer } from 'src/app/core/store/core-reducers';
@@ -20,6 +21,7 @@ import { coreFeatureKey } from 'src/app/core/store/core-state';
   ],
   providers: [
     AuthService,
+    BackendService,
     CoreStoreService,
     {
       provide: APP_INITIALIZER,

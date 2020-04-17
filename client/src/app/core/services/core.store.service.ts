@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/core/services/auth.service';
 import * as coreActions from 'src/app/core/store/core-actions';
 import * as coreSelectors from 'src/app/core/store/core-selectors';
 import { CoreState } from 'src/app/core/store/core-state';
@@ -15,7 +15,7 @@ export class CoreStoreService {
   public readonly isInited$: Observable<boolean>;
 
   constructor(
-    private actions$: Actions,
+    private authService: AuthService,
     private readonly store: Store<CoreState>
   ) {
     this.user$ = this.store.pipe(select(coreSelectors.getUserSelector));
@@ -23,14 +23,11 @@ export class CoreStoreService {
   }
 
   public initStore() {
-    this.store.dispatch(coreActions.loadData());
-    return this.waitUntilStoreInit();
+    return this.authService.checkSession().pipe(
+      tap((user) => {
+        this.store.dispatch(coreActions.initStore({ user }));
+      })
+    ).toPromise();
   }
 
-  private waitUntilStoreInit() {
-    return this.actions$.pipe(
-      ofType(coreActions.initStore),
-      take(1)
-    );
-  }
 }

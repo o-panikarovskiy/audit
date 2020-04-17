@@ -49,7 +49,7 @@ export class WebSocketService {
     this.options = { ...DEFAULT_OPTIONS, ...environment.socket };
 
     const protocol = window.location.protocol.replace('http', 'ws');
-    this.connectionUrl = `${protocol}//${window.location.host}/${environment.apiRoot}/ws`;
+    this.connectionUrl = `${protocol}//${window.location.host}/${environment.socket.url}`;
   }
 
   public getState(socketId: string): SocketState {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { filter, flatMap, map, take, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { CoreStoreService } from 'src/app/core/services/core.store.service';
 import { UserRole } from 'src/app/core/typings/UserRole';
@@ -36,7 +36,9 @@ export class RouteGuard implements CanActivate, CanLoad {
   }
 
   private checkRouteAccess(route: Route | ActivatedRouteSnapshot): Observable<boolean> {
-    return this.coreStore.user$.pipe(
+    return this.coreStore.isInited$.pipe(
+      filter((isInited) => isInited),
+      flatMap(() => this.coreStore.user$),
       map(user => {
         const accessLevel = route.data?.accessLevel;
         const userRole = user ? user.role : UserRole.Anonymous;

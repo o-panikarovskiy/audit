@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 
+	authRoutes "audit/src/components/auth/routes"
 	"audit/src/config"
 	"audit/src/middlewares"
 	"audit/src/sockets"
@@ -18,6 +19,8 @@ func CreateRouter(cfg *config.AppConfig) http.Handler {
 	api := router.PathPrefix("/api").Subrouter()
 	api.HandleFunc("/health", health)
 	api.HandleFunc("/ws", sockets.SocketUpgradeHandler)
+
+	authRoutes.Register(api)
 
 	api.Use(middlewares.ErrorHandle)
 	api.NotFoundHandler = http.HandlerFunc(notFound)
