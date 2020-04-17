@@ -3,15 +3,16 @@ package routes
 import (
 	"net/http"
 
-	"github.com/o-panikarovskiy/audit/src/middlewares"
-	"github.com/o-panikarovskiy/audit/src/sockets"
-	"github.com/o-panikarovskiy/audit/src/utils"
+	"audit/src/config"
+	"audit/src/middlewares"
+	"audit/src/sockets"
+	"audit/src/utils"
 
 	"github.com/gorilla/mux"
 )
 
-// CreateRouter create main routes
-func CreateRouter() *mux.Router {
+// CreateRouter create main http.Handler
+func CreateRouter(cfg *config.AppConfig) http.Handler {
 	router := mux.NewRouter()
 
 	api := router.PathPrefix("/api").Subrouter()
@@ -21,15 +22,13 @@ func CreateRouter() *mux.Router {
 	api.Use(middlewares.ErrorHandle)
 	api.NotFoundHandler = http.HandlerFunc(notFound)
 
-	router.PathPrefix("/").HandlerFunc(createSpaHandler("client/dist", "index.html"))
-
-	addSocketEventListeners()
+	router.PathPrefix("/").HandlerFunc(createSpaHandler(cfg.StaticDir, "index.html"))
 
 	return router
 }
 
 func health(w http.ResponseWriter, r *http.Request) {
-	utils.Send(w, utils.HT{"ok": true})
+	utils.Send(w, utils.StringMap{"ok": true})
 }
 
 func notFound(w http.ResponseWriter, r *http.Request) {

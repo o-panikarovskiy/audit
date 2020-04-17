@@ -80,7 +80,7 @@ export class WebSocketService {
 
       ws.onmessage = (e: MessageEvent) => this.onMessage(e);
       ws.onopen = () => this.onOpen();
-      ws.onclose = (e: CloseEvent) => this.onClose(socketId, e, protocols);
+      ws.onclose = () => this.onClose(socketId, protocols);
       ws.onerror = (e: Event) => this.msgSub.error({ ws, event: e });
 
       this.sockets.set(socketId, ws);
@@ -118,11 +118,11 @@ export class WebSocketService {
     this.notify({ eventName: 'socket:open' });
   }
 
-  private onClose(socketId: string, e: CloseEvent, protocols: string[] = []) {
+  private onClose(socketId: string, protocols: string[] = []) {
     window.clearTimeout(this.reconnectTimerId);
     this.reconnectTimerId = 0;
 
-    if (this.sockets.has(this.clientId)) {
+    if (this.sockets.has(socketId)) {
       this.reconnectTimerId = window.setTimeout(() => {
         if (this.getState(socketId) === SocketState.closed) {
           this.connect(socketId, protocols);

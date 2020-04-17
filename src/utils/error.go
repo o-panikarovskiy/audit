@@ -9,11 +9,11 @@ import (
 
 // APIError is main error struct
 type APIError struct {
-	Status  int      `json:"status"`
-	Code    string   `json:"code"`
-	Message string   `json:"message"`
-	Details HT       `json:"details"`
-	Stack   []string `json:"stack"`
+	Status  int       `json:"status"`
+	Code    string    `json:"code"`
+	Message string    `json:"message"`
+	Details StringMap `json:"details"`
+	Stack   []string  `json:"stack"`
 }
 
 func (error *APIError) Error() string {
@@ -21,8 +21,8 @@ func (error *APIError) Error() string {
 }
 
 // NewAPIError returns APIError
-func NewAPIError(status int, code string, msg string, details ...HT) error {
-	var dt HT
+func NewAPIError(status int, code string, msg string, details ...StringMap) error {
+	var dt StringMap
 
 	for _, item := range details {
 		for key, value := range item {

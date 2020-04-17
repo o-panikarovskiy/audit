@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/o-panikarovskiy/audit/src/config"
-	"github.com/o-panikarovskiy/audit/src/utils"
+	"audit/src/config"
+	"audit/src/utils"
 )
 
 // ErrorHandle global handle error

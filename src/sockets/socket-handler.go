@@ -13,7 +13,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 0,
 }
 
-// SocketUpgradeHandler is main connect ws handler
+// SocketUpgradeHandler connect socket handler
 func SocketUpgradeHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 
@@ -48,6 +48,6 @@ func startListen(client *SocketClient) {
 			break
 		}
 
-		fire(client, message)
+		fireEvents(client, message)
 	}
 }

@@ -1,8 +1,8 @@
-package routes
+package server
 
 import (
-	"github.com/o-panikarovskiy/audit/src/components/sandbox"
-	"github.com/o-panikarovskiy/audit/src/sockets"
+	"audit/src/components/sandbox"
+	"audit/src/sockets"
 )
 
 func addSocketEventListeners() {

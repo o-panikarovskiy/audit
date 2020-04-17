@@ -5,24 +5,19 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/o-panikarovskiy/audit/src/config"
-	"github.com/o-panikarovskiy/audit/src/server"
+	"audit/src/config"
+	"audit/src/server"
 )
 
 func main() {
-	cfg := config.GetCurrentConfig()
-	httpServer := server.StartHTTPServer(cfg)
+	cfg := config.ReadConfig()
+	server.Run(cfg)
 
 	c := make(chan os.Signal, 1)
-	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C)
-	// SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught.
-	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, os.Interrupt) // SIGINT (Ctrl+C)
+	<-c                            // Block until we receive our signal.
 
-	// Block until we receive our signal.
-	<-c
-
-	server.ShutdownHTTPServer(httpServer, cfg.GracefulTimeout)
-
+	server.Stop(cfg)
 	log.Println("shutting down")
 	os.Exit(0)
 }

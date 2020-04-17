@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"log"
 
+	"audit/src/utils"
+
 	"github.com/gorilla/websocket"
-	"github.com/o-panikarovskiy/audit/src/utils"
 )
 
 var clients map[string]*SocketClient = make(map[string]*SocketClient)

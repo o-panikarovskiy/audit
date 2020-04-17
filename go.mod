@@ -1,4 +1,4 @@
-module github.com/o-panikarovskiy/audit
+module audit
 
 go 1.14
 

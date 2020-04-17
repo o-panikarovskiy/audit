@@ -17,7 +17,7 @@ func Subscribe(eventName string, handler EventHandler) {
 	listeners[eventName] = arr
 }
 
-func fire(conn *SocketClient, msg *SocketMessage) {
+func fireEvents(conn *SocketClient, msg *SocketMessage) {
 	arr, ok := listeners[msg.EventName]
 
 	if !ok {

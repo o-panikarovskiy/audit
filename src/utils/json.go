@@ -7,8 +7,8 @@ import (
 	"os"
 )
 
-// HT is a shortcut for map[string]interface{}
-type HT map[string]interface{}
+// StringMap is a shortcut for map[string]interface{}
+type StringMap map[string]interface{}
 
 // Send send data with 200 http status code
 func Send(w http.ResponseWriter, data interface{}) {
@@ -32,7 +32,7 @@ func SendError(w http.ResponseWriter, err error) {
 }
 
 // ReadJSONFile read json file to map
-func ReadJSONFile(path string) (*HT, error) {
+func ReadJSONFile(path string) (*StringMap, error) {
 	jsonFile, err := os.Open(path)
 
 	if err != nil {
@@ -47,7 +47,7 @@ func ReadJSONFile(path string) (*HT, error) {
 		return nil, err
 	}
 
-	var result HT
+	var result StringMap
 	err = json.Unmarshal(byteValue, &result)
 
 	if err != nil {

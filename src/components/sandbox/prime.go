@@ -4,20 +4,20 @@ import (
 	"crypto/rand"
 	"fmt"
 
-	"github.com/o-panikarovskiy/audit/src/sockets"
-	"github.com/o-panikarovskiy/audit/src/utils"
+	"audit/src/sockets"
+	"audit/src/utils"
 )
 
 // SendPrime send prime number to client
 func SendPrime(client *sockets.SocketClient, msg *sockets.SocketMessage) {
 	prime := getPrime()
-	client.SendJSON(msg.EventName, utils.HT{"prime": prime, "clentVal": msg.Data})
+	client.SendJSON(msg.EventName, utils.StringMap{"prime": prime, "clentVal": msg.Data})
 }
 
 // SendPrimeBroadcast send prime number to all clients
 func SendPrimeBroadcast(client *sockets.SocketClient, msg *sockets.SocketMessage) {
 	prime := getPrime()
-	res := utils.HT{"prime": prime, "clentVal": msg.Data}
+	res := utils.StringMap{"prime": prime, "clentVal": msg.Data}
 
 	if !msg.ExcludeMe {
 		sockets.Broadcast(msg.EventName, res)

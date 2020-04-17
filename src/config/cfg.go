@@ -1,29 +1,30 @@
 package config
 
 import (
-	"flag"
-	"fmt"
+	"log"
 	"os"
+	"path/filepath"
 	"time"
 
-	"github.com/o-panikarovskiy/audit/src/utils"
+	"audit/src/utils"
 
 	"github.com/mitchellh/mapstructure"
 )
 
 // AppConfig main app config
 type AppConfig struct {
-	Port            int
-	Env             string
-	GracefulTimeout time.Duration
+	Port            int           `json:"port"`
+	Env             string        `json:"env"`
+	GracefulTimeout time.Duration `json:"gracefulTimeout"`
+	StaticDir       string        `json:"staticDir"`
 }
 
 const (
-	// DevMode indicates gin mode is debug.
+	// DevMode indicates mode is debug.
 	DevMode = "dev"
-	// ProdMode indicates gin mode is release.
+	// ProdMode indicates mode is production.
 	ProdMode = "prod"
-	// TestMode indicates gin mode is test.
+	// TestMode indicates mode is test.
 	TestMode = "test"
 )
 
@@ -31,49 +32,29 @@ var currentConfig *AppConfig = nil
 
 // GetCurrentConfig return current config
 func GetCurrentConfig() *AppConfig {
-	if currentConfig == nil {
-		currentConfig = ReadConfig()
-	}
 	return currentConfig
 }
 
 // ReadConfig parses command line arguments and read json config
 func ReadConfig() *AppConfig {
-	mode := getEnv()
-	c, err := utils.ReadJSONFile(getJSONFileName(mode))
+	if len(os.Args) < 2 {
+		log.Panicln("Please, specify the config file")
+	}
 
+	path, err := filepath.Abs(os.Args[1])
 	if err != nil {
-		panic(err)
+		log.Panicln(err)
 	}
 
-	var result AppConfig
-	err = mapstructure.Decode(c, &result)
-
+	c, err := utils.ReadJSONFile(path)
 	if err != nil {
-		panic(err)
+		log.Panicln(err)
 	}
 
-	return &result
-}
-
-func getEnv() string {
-	mode := os.Getenv("APP_ENV")
-
-	if mode == "" {
-		mode = DevMode
-	}
-
-	mode = *flag.String("mode", mode, "dev | prod | test")
-	flag.Parse()
-
-	return mode
-}
-
-func getJSONFileName(mode string) string {
-	curdir, err := os.Getwd()
+	err = mapstructure.Decode(c, &currentConfig)
 	if err != nil {
-		return ""
+		log.Panicln(err)
 	}
 
-	return fmt.Sprintf("%s/src/config/%s.json", curdir, mode)
+	return currentConfig
 }
