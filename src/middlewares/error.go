@@ -20,15 +20,15 @@ func ErrorHandle(next http.Handler) http.Handler {
 			var err error
 			switch t := r.(type) {
 			case string:
-				err = utils.NewAPIError(http.StatusInternalServerError, "APP_ERROR", t)
+				err = utils.NewAPPError(http.StatusInternalServerError, "APP_ERROR", t)
 			case error:
 				err = t
 			default:
-				err = utils.NewAPIError(http.StatusInternalServerError, "APP_ERROR", "Unknown error")
+				err = utils.NewAPPError(http.StatusInternalServerError, "APP_ERROR", "Unknown error")
 			}
 
 			cfg := config.GetCurrentConfig()
-			apiErr, ok := err.(*utils.APIError)
+			apiErr, ok := err.(*utils.APPError)
 			if ok && cfg.Env == config.ProdMode {
 				apiErr.Stack = nil
 			}

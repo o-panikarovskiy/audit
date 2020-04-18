@@ -4,8 +4,8 @@ package user
 type IService interface {
 	IReader
 	IWriter
-	Register(user *User) (string, error)
-	Auth(user *User, password string) error
+	Register(email string, password string) (*User, error)
+	Auth(email string, password string) (*User, error)
 	CheckSession(sessionID string) (*User, error)
 	GetRepo() IRepository
 }

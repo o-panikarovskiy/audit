@@ -24,7 +24,7 @@ func SendJSON(w http.ResponseWriter, status int, data interface{}) {
 
 // SendError send json to response
 func SendError(w http.ResponseWriter, err error) {
-	if e, ok := err.(*APIError); ok {
+	if e, ok := err.(*APPError); ok {
 		SendJSON(w, e.Status, e)
 		return
 	}

@@ -1,14 +1,7 @@
 package config
 
 import (
-	"log"
-	"os"
-	"path/filepath"
 	"time"
-
-	"audit/src/utils"
-
-	"github.com/mitchellh/mapstructure"
 )
 
 // AppConfig main app config
@@ -28,33 +21,17 @@ const (
 	TestMode = "test"
 )
 
-var currentConfig *AppConfig = nil
-
-// GetCurrentConfig return current config
-func GetCurrentConfig() *AppConfig {
-	return currentConfig
+// IsDev returns true if env in DevMode
+func (c *AppConfig) IsDev() bool {
+	return c.Env == DevMode
 }
 
-// ReadConfig parses command line arguments and read json config
-func ReadConfig() *AppConfig {
-	if len(os.Args) < 2 {
-		log.Panicln("Please, specify the config file")
-	}
+// IsProd returns true if env in ProdMode
+func (c *AppConfig) IsProd() bool {
+	return c.Env == ProdMode
+}
 
-	path, err := filepath.Abs(os.Args[1])
-	if err != nil {
-		log.Panicln(err)
-	}
-
-	c, err := utils.ReadJSONFile(path)
-	if err != nil {
-		log.Panicln(err)
-	}
-
-	err = mapstructure.Decode(c, &currentConfig)
-	if err != nil {
-		log.Panicln(err)
-	}
-
-	return currentConfig
+// IsTest returns true if env in TestMode
+func (c *AppConfig) IsTest() bool {
+	return c.Env == TestMode
 }

@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-// APIError is main error struct
-type APIError struct {
+// APPError is main error struct
+type APPError struct {
 	Status  int       `json:"status"`
 	Code    string    `json:"code"`
 	Message string    `json:"message"`
@@ -16,12 +16,12 @@ type APIError struct {
 	Stack   []string  `json:"stack"`
 }
 
-func (error *APIError) Error() string {
+func (error *APPError) Error() string {
 	return fmt.Sprintf("%v-%v: %v", error.Status, error.Code, error.Message)
 }
 
-// NewAPIError returns APIError
-func NewAPIError(status int, code string, msg string, details ...StringMap) error {
+// NewAPPError returns APIError
+func NewAPPError(status int, code string, msg string, details ...StringMap) *APPError {
 	var dt StringMap
 
 	for _, item := range details {
@@ -30,7 +30,7 @@ func NewAPIError(status int, code string, msg string, details ...StringMap) erro
 		}
 	}
 
-	return &APIError{
+	return &APPError{
 		Status:  status,
 		Code:    code,
 		Message: msg,

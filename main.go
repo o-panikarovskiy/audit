@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/signal"
 
@@ -18,6 +17,5 @@ func main() {
 	<-c                            // Block until we receive our signal.
 
 	core.Stop(cfg)
-	log.Println("shutting down")
 	os.Exit(0)
 }

@@ -1,6 +1,8 @@
 package core
 
-import "audit/src/config"
+import (
+	"audit/src/config"
+)
 
 // Run servers
 func Run(cfg *config.AppConfig) {
@@ -12,5 +14,6 @@ func Run(cfg *config.AppConfig) {
 
 // Stop servers
 func Stop(cfg *config.AppConfig) {
+	shutDownEntities(cfg)
 	shutdownHTTPServer(cfg)
 }

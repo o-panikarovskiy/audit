@@ -4,15 +4,21 @@ import (
 	"audit/src/utils"
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
 
-var clients map[string]ISocketClient = make(map[string]ISocketClient)
+type connectionsMap struct {
+	sync.Mutex
+	clients map[string]ISocketClient
+}
+
+var connections = &connectionsMap{clients: make(map[string]ISocketClient)}
 
 // GetClient return client connection by id
 func GetClient(clientID string) (ISocketClient, error) {
-	conn, ok := clients[clientID]
+	conn, ok := connections.clients[clientID]
 	if !ok {
 		return nil, fmt.Errorf("Socket client not found. Client ID: %v", clientID)
 	}
@@ -27,7 +33,7 @@ func Broadcast(eventName string, data interface{}) error {
 		EventName: eventName,
 	}
 
-	for _, client := range clients {
+	for _, client := range connections.clients {
 		err := client.SendMessage(msg)
 		if err != nil {
 			return err
@@ -44,7 +50,7 @@ func FilterBroadcast(eventName string, data interface{}, predicate func(clientID
 		EventName: eventName,
 	}
 
-	for _, client := range clients {
+	for _, client := range connections.clients {
 		if predicate(client.GetID()) {
 			err := client.SendMessage(msg)
 			if err != nil {
@@ -68,7 +74,9 @@ func createClient(conn *websocket.Conn) ISocketClient {
 		return nil
 	})
 
-	clients[client.GetID()] = client
+	connections.Lock()
+	defer connections.Unlock()
+	connections.clients[client.GetID()] = client
 
 	log.Println("Client connected", client.GetID())
 	client.WriteJSON("socket:client:id", client.GetID())
@@ -77,5 +85,7 @@ func createClient(conn *websocket.Conn) ISocketClient {
 }
 
 func removeClient(clientID string) {
-	delete(clients, clientID)
+	connections.Lock()
+	defer connections.Unlock()
+	delete(connections.clients, clientID)
 }

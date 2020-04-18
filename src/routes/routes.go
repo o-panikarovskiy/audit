@@ -42,5 +42,5 @@ func health(w http.ResponseWriter, r *http.Request) {
 }
 
 func notFound(w http.ResponseWriter, r *http.Request) {
-	utils.SendError(w, utils.NewAPIError(http.StatusNotFound, `NOT_FOUND`, `Path not found.`))
+	utils.SendError(w, utils.NewAPPError(http.StatusNotFound, `NOT_FOUND`, `Path not found.`))
 }
