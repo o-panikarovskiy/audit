@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	authRoutes "audit/src/components/auth/routes"
+	"audit/src/components/auth"
 	"audit/src/config"
 	"audit/src/middlewares"
 	"audit/src/sockets"
@@ -17,10 +17,10 @@ func CreateRouter(cfg *config.AppConfig) http.Handler {
 	router := mux.NewRouter()
 
 	api := router.PathPrefix("/api").Subrouter()
-	api.HandleFunc("/health", health)
-	api.HandleFunc("/ws", sockets.SocketUpgradeHandler)
+	api.HandleFunc("/health", health).Methods("GET")
+	api.HandleFunc("/ws", sockets.HTTPUpgradeHandler).Methods("GET")
 
-	authRoutes.Register(api)
+	setSubRoutes(api, "/auth", auth.GetRoutes())
 
 	api.Use(middlewares.ErrorHandle)
 	api.NotFoundHandler = http.HandlerFunc(notFound)
@@ -28,6 +28,13 @@ func CreateRouter(cfg *config.AppConfig) http.Handler {
 	router.PathPrefix("/").HandlerFunc(createSpaHandler(cfg.StaticDir, "index.html"))
 
 	return router
+}
+
+func setSubRoutes(router *mux.Router, prefix string, routeHandlers utils.RouteHandlers) {
+	sub := router.PathPrefix(prefix).Subrouter()
+	for _, val := range *routeHandlers {
+		sub.HandleFunc(val.Route, val.Handler).Methods(val.Method)
+	}
 }
 
 func health(w http.ResponseWriter, r *http.Request) {

@@ -1,12 +1,13 @@
-package server
+package core
 
 import "audit/src/config"
 
 // Run servers
 func Run(cfg *config.AppConfig) {
-	createHTTPServer(cfg)
+	initEntities(cfg)
+	addSocketEventListeners(cfg)
 
-	addSocketEventListeners()
+	createHTTPServer(cfg)
 }
 
 // Stop servers
