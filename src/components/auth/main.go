@@ -11,6 +11,8 @@ import (
 func GetRoutes() utils.RouteHandlers {
 	return &[]utils.RouteHandler{
 		{Route: "/check", Method: "GET", Handler: http.CheckSession},
+		{Route: "/signup", Method: "POST", Handler: http.SignUp},
+		{Route: "/signin", Method: "POST", Handler: http.SignIn},
 	}
 }
 

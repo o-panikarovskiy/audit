@@ -24,9 +24,9 @@ func CreateRouter(cfg *config.AppConfig) http.Handler {
 
 	api.Use(middlewares.ErrorHandle)
 	api.NotFoundHandler = http.HandlerFunc(notFound)
+	api.MethodNotAllowedHandler = http.HandlerFunc(notAllowed)
 
 	router.PathPrefix("/").HandlerFunc(createSpaHandler(cfg.StaticDir, "index.html"))
-
 	return router
 }
 
@@ -43,4 +43,8 @@ func health(w http.ResponseWriter, r *http.Request) {
 
 func notFound(w http.ResponseWriter, r *http.Request) {
 	utils.SendError(w, utils.NewAPPError(http.StatusNotFound, `NOT_FOUND`, `Path not found.`))
+}
+
+func notAllowed(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusMethodNotAllowed)
 }

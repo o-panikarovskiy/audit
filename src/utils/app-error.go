@@ -9,32 +9,24 @@ import (
 
 // APPError is main error struct
 type APPError struct {
-	Status  int       `json:"status"`
-	Code    string    `json:"code"`
-	Message string    `json:"message"`
-	Details StringMap `json:"details"`
-	Stack   []string  `json:"stack"`
+	Status  int         `json:"status"`
+	Code    string      `json:"code"`
+	Message string      `json:"message"`
+	Details interface{} `json:"details"`
+	Stack   []string    `json:"stack"`
 }
 
 func (error *APPError) Error() string {
 	return fmt.Sprintf("%v-%v: %v", error.Status, error.Code, error.Message)
 }
 
-// NewAPPError returns APIError
-func NewAPPError(status int, code string, msg string, details ...StringMap) *APPError {
-	var dt StringMap
-
-	for _, item := range details {
-		for key, value := range item {
-			dt[key] = value
-		}
-	}
-
+// NewAPPError returns APPError
+func NewAPPError(status int, code string, msg string, details ...interface{}) *APPError {
 	return &APPError{
 		Status:  status,
 		Code:    code,
 		Message: msg,
-		Details: dt,
+		Details: details,
 		Stack:   *stackTrace(1),
 	}
 }

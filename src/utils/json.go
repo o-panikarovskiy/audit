@@ -5,31 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 )
-
-// StringMap is a shortcut for map[string]interface{}
-type StringMap map[string]interface{}
-
-// Send send data with 200 http status code
-func Send(w http.ResponseWriter, data interface{}) {
-	SendJSON(w, http.StatusOK, data)
-}
-
-// SendJSON send json to response
-func SendJSON(w http.ResponseWriter, status int, data interface{}) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(data)
-}
-
-// SendError send json to response
-func SendError(w http.ResponseWriter, err error) {
-	if e, ok := err.(*APPError); ok {
-		SendJSON(w, e.Status, e)
-		return
-	}
-	SendJSON(w, http.StatusInternalServerError, err)
-}
 
 // ReadJSONFile read json file to map
 func ReadJSONFile(path string) (*StringMap, error) {
@@ -55,4 +32,25 @@ func ReadJSONFile(path string) (*StringMap, error) {
 	}
 
 	return &result, nil
+}
+
+// DecodeJSONBody read json to dest
+func DecodeJSONBody(r *http.Request, dest interface{}) error {
+	if value := r.Header.Get("Content-Type"); !strings.HasPrefix(value, "application/json") {
+		return BadRequestModel("Content-Type header is not application/json")
+	}
+
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+
+	err := dec.Decode(&dest)
+	if err != nil {
+		return BadRequestModel(err)
+	}
+
+	if dec.More() {
+		return BadRequestModel("Request body must only contain a single JSON object")
+	}
+
+	return nil
 }

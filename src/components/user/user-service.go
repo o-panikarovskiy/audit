@@ -22,7 +22,7 @@ func (s *userService) Auth(email string, password string) (*User, error) {
 
 	if user == nil ||
 		user.PasswordHash != utils.SHA512(password, user.PasswordSalt) {
-		return nil, utils.NewAPPError(401, "AUTH_ERROR", "Email or password is incorrect")
+		return nil, utils.NewAPPError(400, "AUTH_ERROR", "Email or password is incorrect")
 	}
 
 	return user, nil
@@ -43,11 +43,12 @@ func (s *userService) Register(email string, password string) (*User, error) {
 		return nil, utils.NewAPPError(400, "USER_EXISTS", "User already exists")
 	}
 
-	salt := utils.CreateGUID()
+	salt := utils.RandomString(64)
 	user := &User{
 		ID:           utils.CreateGUID(),
 		Email:        email,
-		PasswordSalt: utils.CreateGUID(),
+		Role:         UserRole,
+		PasswordSalt: salt,
 		PasswordHash: utils.SHA512(password, salt),
 	}
 
