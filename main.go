@@ -5,11 +5,11 @@ import (
 	"os/signal"
 
 	"audit/src/config"
-	"audit/src/core"
+	"audit/src/server"
 )
 
 func main() {
-	inst := core.NewInstance(config.ReadConfig())
+	inst := server.NewInstance(config.ReadConfig())
 	inst.Run()
 
 	c := make(chan os.Signal, 1)

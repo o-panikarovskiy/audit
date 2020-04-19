@@ -17,12 +17,12 @@ func (s *userService) Auth(email string, password string) (*User, error) {
 	user, err := s.FindByEmail(email)
 
 	if err != nil {
-		return nil, utils.NewAPPError(500, "APP_ERROR", err.Error())
+		return nil, utils.NewAppError(500, "APP_ERROR", err.Error())
 	}
 
 	if user == nil ||
 		user.PasswordHash != utils.SHA512(password, user.PasswordSalt) {
-		return nil, utils.NewAPPError(400, "AUTH_ERROR", "Email or password is incorrect")
+		return nil, utils.NewAppError(400, "AUTH_ERROR", "Email or password is incorrect")
 	}
 
 	return user, nil
@@ -36,11 +36,11 @@ func (s *userService) Register(email string, password string) (*User, error) {
 	exUser, err := s.FindByEmail(email)
 
 	if err != nil {
-		return nil, utils.NewAPPError(500, "APP_ERROR", err.Error())
+		return nil, utils.NewAppError(500, "APP_ERROR", err.Error())
 	}
 
 	if exUser != nil {
-		return nil, utils.NewAPPError(400, "USER_EXISTS", "User already exists")
+		return nil, utils.NewAppError(400, "USER_EXISTS", "User already exists")
 	}
 
 	salt := utils.RandomString(64)

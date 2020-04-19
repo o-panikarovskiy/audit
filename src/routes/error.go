@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"audit/src/config"
 	"audit/src/utils"
 )
 
@@ -19,20 +18,12 @@ func WithError(next http.Handler) http.Handler {
 
 			log.Println("api error: ", r)
 
-			switch val := r.(type) {
-			case *utils.AppError:
-				var cfg = config.GetCurrentConfig()
-				if cfg.IsProd() {
-					val.Stack = nil
-				}
-				utils.SendJSON(w, val.Status, val)
-			case error:
-				utils.SendJSON(w, http.StatusInternalServerError, &utils.StringMap{"message": val.Error()})
-			case string:
-				utils.SendJSON(w, http.StatusInternalServerError, &utils.StringMap{"message": val})
-			default:
+			if err, ok := r.(error); ok {
+				utils.ToError(w, http.StatusInternalServerError, err)
+			} else {
 				http.Error(w, "Unknown error", http.StatusInternalServerError)
 			}
+
 		}()
 
 		next.ServeHTTP(w, r)

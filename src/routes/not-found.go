@@ -5,6 +5,9 @@ import (
 	"net/http"
 )
 
-func notFound(w http.ResponseWriter, r *http.Request) {
-	panic(utils.NewAPPError(http.StatusNotFound, `NOT_FOUND`, `Path not found.`))
+func notFound(res http.ResponseWriter, req *http.Request) {
+	utils.ToError(res, http.StatusNotFound, &utils.AppError{
+		Code:    "NOT_FOUND",
+		Message: "Path not found",
+	})
 }
