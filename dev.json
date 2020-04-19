@@ -1,0 +1,7 @@
+{
+    "port": 8080,
+    "env": "dev",
+    "gracefulTimeout": 15,
+    "staticDir": "./client/dist",
+    "logRequestAfterMs": 100
+}

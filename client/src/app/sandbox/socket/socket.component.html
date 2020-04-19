@@ -1,0 +1,19 @@
+<form [formGroup]="form"
+      (ngSubmit)="onSubmit()">
+  <label>
+    Echo Message:
+    <input type="text"
+           formControlName="echoMsg">
+  </label>
+
+  <button type="submit">Send</button>
+  <button type="button"
+          (click)="broadcast()">Broadcast</button>
+  <button type="button"
+          (click)="excludeMe()">Exclude Me</button>
+  <button type="button"
+          (click)="disconnect()">Close</button>
+</form>
+
+
+<p *ngFor="let m of messages">{{m | json}}</p>
