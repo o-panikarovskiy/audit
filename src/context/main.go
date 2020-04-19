@@ -34,7 +34,7 @@ func (ctx Context) JSON() *utils.StringMap {
 	val, ok := ctx.Value(jsonKey).(*utils.StringMap)
 
 	if !ok {
-		panic(fmt.Errorf("Failed to get *utils.StringMap from context %v", val))
+		panic(fmt.Errorf("Failed to get value from context %v", val))
 	}
 
 	return val

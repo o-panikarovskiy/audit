@@ -7,12 +7,13 @@ import (
 )
 
 // CheckSession handler
-func CheckSession(w http.ResponseWriter, r *http.Request) {
+func CheckSession(res http.ResponseWriter, req *http.Request) {
 	user, err := controller.CheckSession("test")
 
 	if err != nil {
-		panic(err)
+		utils.ToError(res, 400, err)
+		return
 	}
 
-	utils.SendJSON(w, http.StatusOK, user)
+	utils.ToJSON(res, http.StatusOK, user)
 }

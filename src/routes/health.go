@@ -6,5 +6,5 @@ import (
 )
 
 func health(w http.ResponseWriter, r *http.Request) {
-	utils.SendJSON(w, http.StatusOK, utils.StringMap{"ok": true})
+	utils.ToJSON(w, http.StatusOK, utils.StringMap{"ok": true})
 }

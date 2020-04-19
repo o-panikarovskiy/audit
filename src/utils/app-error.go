@@ -1,93 +1,123 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
+	"path/filepath"
 	"runtime"
-	"strings"
-
-	"github.com/go-playground/validator/v10"
 )
 
-// AppError is main error struct
+// AppError represents http error
 type AppError struct {
 	Status  int         `json:"status"`
 	Code    string      `json:"code"`
 	Message string      `json:"message"`
 	Details interface{} `json:"details"`
-	Stack   []string    `json:"stack"`
+	Err     error       `json:"cause"`
+	Stack   stack       `json:"stack"`
 }
 
-func (error *AppError) Error() string {
-	return fmt.Sprintf("%v-%v: %v", error.Status, error.Code, error.Message)
+// stack is a slice of StackFrames representing a stack trace
+type stack []stackFrame
+
+// stackFrame  represents a single frame of a stack trace
+type stackFrame struct {
+	File     string `json:"file,omitempty"`
+	Line     int    `json:"line,omitempty"`
+	Function string `json:"function,omitempty"`
 }
 
-// NewAPPError returns APPError
-func NewAPPError(status int, code string, msg string, details ...interface{}) *AppError {
-	return &AppError{
-		Status:  status,
-		Code:    code,
-		Message: msg,
-		Details: details,
-		Stack:   *stackTrace(1),
+// NewAppError returns an error with error code and error messages provided in
+// function params
+func NewAppError(status int, code string, ErrorMsg ...string) *AppError {
+	e := AppError{Status: status, Code: code}
+
+	msgCount := len(ErrorMsg)
+	if msgCount > 0 {
+		e.Message = ErrorMsg[0]
 	}
+
+	if msgCount > 1 {
+		e.Details = ErrorMsg[1:]
+	}
+
+	return &e
 }
 
-// BadRequestModel returns APPError
-func BadRequestModel(err interface{}) *AppError {
-	var details *StringMap
-	message := "Invalid request model"
-
-	switch e := err.(type) {
-	case *AppError:
-		return e
-	case string:
-		message = e
-	case validator.ValidationErrors:
-		details = parseValidationErrors(e)
-	case error:
-		message = e.Error()
-	}
-
-	return &AppError{
-		Status:  http.StatusBadRequest,
-		Code:    "INVALID_REQUEST_MODEL",
-		Message: message,
-		Details: details,
-		Stack:   *stackTrace(1),
-	}
+// Error returns a string representation of AppError. It includes at least
+// error status, code and message.
+func (e *AppError) Error() string {
+	return fmt.Sprintf("%v-%v: %v", e.Status, e.Code, e.Message)
 }
 
-func stackTrace(skip int) *[]string {
-	const maxSize = 50
+// Wrap wraps error in AppError for nested errors
+func (e *AppError) Wrap(err error) {
+	e.Err = err
+}
 
-	stack := make([]uintptr, maxSize)
-	length := runtime.Callers(2+skip, stack[:])
-	stack = stack[:length]
+// Unwrap unwraps error in AppError
+func (e *AppError) Unwrap() error {
+	return e.Err
+}
 
-	if len(stack) == 0 {
-		return nil
+// WriteJSON write a json representation to http.ResponseWriter
+func (e *AppError) WriteJSON(res http.ResponseWriter, status int, withStack bool) error {
+	var err *AppError
+
+	if withStack {
+		err = e.subset()
+		stack := getStack(4)
+		err.Stack = stack
 	}
 
-	curdir, err := os.Getwd()
-	if err != nil {
-		return nil
+	res.Header().Set("Content-Type", "application/json; charset=utf-8")
+	res.WriteHeader(status)
+	return json.NewEncoder(res).Encode(err)
+}
+
+func (e *AppError) subset() *AppError {
+	err := &AppError{
+		Status:  e.Status,
+		Code:    e.Code,
+		Message: e.Message,
+		Details: e.Details,
 	}
 
-	res := make([]string, len(stack)-1)
-	frames := runtime.CallersFrames(stack)
-	frame, more := frames.Next()
-	for i := 0; more && i < len(res); i++ {
-		res[i] = fmt.Sprintf(
-			"%s %s:%d",
-			strings.Replace(frame.Function, curdir, ``, 1),
-			strings.Replace(frame.File, curdir, ``, 1),
-			frame.Line,
-		)
-
-		frame, more = frames.Next()
+	cause := e.Unwrap()
+	if cause != nil {
+		if c, ok := cause.(*AppError); ok {
+			err.Wrap(c.subset())
+		} else {
+			err.Wrap(&AppError{Message: cause.Error()})
+		}
 	}
 
-	return &res
+	return err
+}
+
+func getStack(skip int) []stackFrame {
+	stack := make([]stackFrame, 0)
+
+	for i := skip; ; i++ {
+		pc, fn, line, ok := runtime.Caller(i)
+		if !ok {
+			// no more frames - we're done
+			break
+		}
+		_, fn = filepath.Split(fn)
+
+		f := stackFrame{File: fn, Line: line, Function: funcName(pc)}
+		stack = append(stack, f)
+	}
+
+	return stack
+}
+
+// funcName gets the name of the function at pointer or "??" if one can't be found
+func funcName(pc uintptr) string {
+	if f := runtime.FuncForPC(pc); f != nil {
+		return f.Name()
+	}
+	return "??"
 }

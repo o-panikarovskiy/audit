@@ -21,18 +21,21 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 	err := mapstructure.Decode(context.GetContext(req).JSON(), &model)
 
 	if err != nil {
-		panic(err)
+		utils.ToError(res, 400, err)
+		return
 	}
 
 	err = utils.ValidateModel(model)
 	if err != nil {
-		panic(err)
+		utils.ToError(res, 400, err)
+		return
 	}
 
 	user, err := controller.SignUp(model.Email, model.Password)
 	if err != nil {
-		panic(err)
+		utils.ToError(res, 400, err)
+		return
 	}
 
-	utils.SendJSON(res, http.StatusOK, user)
+	utils.ToJSON(res, http.StatusOK, user)
 }

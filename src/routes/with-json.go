@@ -13,7 +13,8 @@ func WithJSON(next http.Handler) http.Handler {
 	fn := func(res http.ResponseWriter, req *http.Request) {
 		data, err := decodeJSON(req)
 		if err != nil {
-			panic(err)
+			utils.ToError(res, http.StatusBadRequest, err)
+			return
 		}
 
 		ctx := context.GetContext(req)
@@ -28,7 +29,7 @@ func WithJSON(next http.Handler) http.Handler {
 func decodeJSON(req *http.Request) (*utils.StringMap, error) {
 	ct := req.Header.Get("Content-Type")
 	if !strings.HasPrefix(ct, "application/json") {
-		return nil, utils.BadRequestModel("Content-Type header is not application/json")
+		return nil, utils.NewAppError(http.StatusBadRequest, "INVALID_HEADERS", "Content-Type header is not application/json")
 	}
 
 	dest := make(utils.StringMap)
@@ -36,7 +37,7 @@ func decodeJSON(req *http.Request) (*utils.StringMap, error) {
 	err := dec.Decode(&dest)
 
 	if err != nil {
-		return nil, utils.BadRequestModel(err)
+		return nil, err
 	}
 
 	return &dest, nil

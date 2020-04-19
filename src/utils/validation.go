@@ -1,45 +1,60 @@
 package utils
 
 import (
-	"fmt"
-	"reflect"
-	"strings"
+	"net/http"
 
 	"github.com/go-playground/validator/v10"
 )
 
+type validationField struct {
+	Field     string      `json:"field"`
+	Condition string      `json:"condition"`
+	Param     string      `json:"param,omitempty"`
+	Actual    interface{} `json:"actual,omitempty"`
+}
+
 // ValidateModel check model by struct
 func ValidateModel(model interface{}) error {
 	v := validator.New()
-	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-		if name == "-" {
-			return ""
-		}
-		return name
-	})
 
 	err := v.Struct(model)
 	if err != nil {
-		return BadRequestModel(err)
+		return &AppError{
+			Err:     err,
+			Status:  http.StatusBadRequest,
+			Code:    "INVALID_REQUEST_MODEL",
+			Message: "Invalid request model",
+			Details: getValidationErrors(err),
+		}
 	}
 
 	return nil
 }
 
-func parseValidationErrors(err validator.ValidationErrors) *StringMap {
-	var sb strings.Builder
-	sm := make(StringMap)
-	for _, field := range err {
-		sb.Reset()
-		sb.WriteString("condition: " + field.ActualTag())
-		if prm := field.Param(); prm != "" {
-			sb.WriteString("(" + prm + ")")
-		}
-		if val := field.Value(); val != "" && val != nil {
-			sb.WriteString(fmt.Sprintf("; actual: %v", val))
-		}
-		sm[field.Field()] = sb.String()
+func getValidationErrors(err error) *[]validationField {
+	ve, ok := err.(validator.ValidationErrors)
+	if !ok {
+		return nil
 	}
-	return &sm
+
+	arr := make([]validationField, len(ve))
+
+	for i, field := range ve {
+		m := validationField{}
+
+		m.Field = field.Field()
+		m.Condition = field.ActualTag()
+
+		if prm := field.Param(); prm != "" {
+			m.Param = prm
+		}
+
+		if val := field.Value(); val != "" && val != nil {
+			m.Actual = val
+		}
+
+		arr[i] = m
+	}
+
+	return &arr
 }
