@@ -2,13 +2,16 @@ package utils
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"runtime"
 	"strings"
+
+	"github.com/go-playground/validator/v10"
 )
 
-// APPError is main error struct
-type APPError struct {
+// AppError is main error struct
+type AppError struct {
 	Status  int         `json:"status"`
 	Code    string      `json:"code"`
 	Message string      `json:"message"`
@@ -16,16 +19,41 @@ type APPError struct {
 	Stack   []string    `json:"stack"`
 }
 
-func (error *APPError) Error() string {
+func (error *AppError) Error() string {
 	return fmt.Sprintf("%v-%v: %v", error.Status, error.Code, error.Message)
 }
 
 // NewAPPError returns APPError
-func NewAPPError(status int, code string, msg string, details ...interface{}) *APPError {
-	return &APPError{
+func NewAPPError(status int, code string, msg string, details ...interface{}) *AppError {
+	return &AppError{
 		Status:  status,
 		Code:    code,
 		Message: msg,
+		Details: details,
+		Stack:   *stackTrace(1),
+	}
+}
+
+// BadRequestModel returns APPError
+func BadRequestModel(err interface{}) *AppError {
+	var details *StringMap
+	message := "Invalid request model"
+
+	switch e := err.(type) {
+	case *AppError:
+		return e
+	case string:
+		message = e
+	case validator.ValidationErrors:
+		details = parseValidationErrors(e)
+	case error:
+		message = e.Error()
+	}
+
+	return &AppError{
+		Status:  http.StatusBadRequest,
+		Code:    "INVALID_REQUEST_MODEL",
+		Message: message,
 		Details: details,
 		Stack:   *stackTrace(1),
 	}

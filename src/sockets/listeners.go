@@ -1,11 +1,5 @@
 package sockets
 
-import (
-	"log"
-
-	"github.com/gorilla/websocket"
-)
-
 // EventHandler socket handler
 type EventHandler func(ISocketClient, *SocketMessage)
 
@@ -27,32 +21,6 @@ func Subscribe(eventName string, handler EventHandler) {
 func SubscribeEvents(events SocketHandlers) {
 	for _, val := range *events {
 		Subscribe(val.Event, val.Handler)
-	}
-}
-
-func startListen(client ISocketClient) {
-	defer client.Close()
-
-	for {
-		mt, bytes, err := client.ReadBytes()
-		if err != nil {
-			log.Println("ws error read:", err)
-			break
-		}
-
-		if mt != websocket.TextMessage {
-			continue
-		}
-
-		log.Printf("ws recv: %s", bytes)
-		message, err := client.ToMessage(bytes)
-
-		if err != nil {
-			log.Println("ws error parse:", err)
-			break
-		}
-
-		fireEvents(client, message)
 	}
 }
 

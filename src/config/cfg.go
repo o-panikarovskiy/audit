@@ -6,10 +6,11 @@ import (
 
 // AppConfig main app config
 type AppConfig struct {
-	Port            int           `json:"port"`
-	Env             string        `json:"env"`
-	GracefulTimeout time.Duration `json:"gracefulTimeout"`
-	StaticDir       string        `json:"staticDir"`
+	Port              int           `json:"port"`
+	Env               string        `json:"env"`
+	GracefulTimeout   time.Duration `json:"gracefulTimeout"`
+	StaticDir         string        `json:"staticDir"`
+	LogRequestAfterMs time.Duration `json:"logRequestAfterMs"`
 }
 
 const (

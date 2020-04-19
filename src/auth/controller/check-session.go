@@ -1,6 +1,6 @@
 package controller
 
-import "audit/src/components/user"
+import "audit/src/user"
 
 // CheckSession checks user session by id
 func CheckSession(sessionID string) (*user.User, error) {

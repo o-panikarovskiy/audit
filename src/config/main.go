@@ -1,12 +1,11 @@
 package config
 
 import (
-	"audit/src/utils"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/mitchellh/mapstructure"
 )
 
 var currentConfig *AppConfig = nil
@@ -27,15 +26,27 @@ func ReadConfig() *AppConfig {
 		log.Panicln(err)
 	}
 
-	c, err := utils.ReadJSONFile(path)
-	if err != nil {
-		log.Panicln(err)
-	}
-
-	err = mapstructure.Decode(c, &currentConfig)
-	if err != nil {
-		log.Panicln(err)
-	}
-
+	currentConfig = readConfigFile(path)
 	return currentConfig
+}
+func readConfigFile(path string) *AppConfig {
+	jsonFile, err := os.Open(path)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	var result AppConfig
+	err = json.Unmarshal(byteValue, &result)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	return &result
 }

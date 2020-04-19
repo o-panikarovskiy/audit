@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -13,8 +12,8 @@ import (
 
 var httpServer *http.Server
 
-func createHTTPServer(cfg *config.AppConfig) {
-	httpServer = &http.Server{
+func createHTTPServer(cfg *config.AppConfig) *http.Server {
+	srv := &http.Server{
 		Addr: fmt.Sprintf("0.0.0.0:%d", cfg.Port),
 		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout:      time.Second * 15,
@@ -23,24 +22,14 @@ func createHTTPServer(cfg *config.AppConfig) {
 		Handler:           routes.CreateRouter(cfg),
 	}
 
-	// Run our server in a goroutine so that it doesn't block.
-	go func() {
-		log.Println(fmt.Sprintf("Server start listening on 0.0.0.0:%d", cfg.Port))
-		if err := httpServer.ListenAndServe(); err != nil {
-			panic(err)
-		}
-	}()
+	return srv
 }
 
-func shutdownHTTPServer(cfg *config.AppConfig) {
-	if httpServer == nil {
-		return
-	}
-
+func shutdownHTTPServer(srv *http.Server, cfg *config.AppConfig) {
 	// Create a deadline to wait for.
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.GracefulTimeout)
 	defer cancel()
 	// Doesn't block if no connections, but will otherwise wait
 	// until the timeout deadline.
-	httpServer.Shutdown(ctx)
+	srv.Shutdown(ctx)
 }

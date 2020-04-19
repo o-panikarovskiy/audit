@@ -1,7 +1,7 @@
 package sockets
 
 import (
-	"audit/src/components/auth/controller"
+	"audit/src/auth/controller"
 	"audit/src/sockets"
 )
 

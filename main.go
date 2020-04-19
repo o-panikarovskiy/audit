@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	cfg := config.ReadConfig()
-	core.Run(cfg)
+	inst := core.NewInstance(config.ReadConfig())
+	inst.Run()
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt) // SIGINT (Ctrl+C)
 	<-c                            // Block until we receive our signal.
 
-	core.Stop(cfg)
+	inst.Stop()
 	os.Exit(0)
 }

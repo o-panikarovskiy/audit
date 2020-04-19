@@ -1,7 +1,7 @@
 package core
 
 import (
-	"audit/src/components/auth"
+	"audit/src/auth"
 	"audit/src/config"
 	"audit/src/sockets"
 )

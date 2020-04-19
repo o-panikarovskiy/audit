@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"audit/src/components/auth/http"
-	authSockets "audit/src/components/auth/sockets"
+	"audit/src/auth/http"
+	authSockets "audit/src/auth/sockets"
 	"audit/src/sockets"
 	"audit/src/utils"
 )

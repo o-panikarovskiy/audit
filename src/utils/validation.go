@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"net/http"
 	"reflect"
 	"strings"
 
@@ -26,31 +25,6 @@ func ValidateModel(model interface{}) error {
 	}
 
 	return nil
-}
-
-// BadRequestModel returns APPError
-func BadRequestModel(err interface{}) *APPError {
-	var details *StringMap
-	message := "Invalid request model"
-
-	switch e := err.(type) {
-	case *APPError:
-		return e
-	case string:
-		message = e
-	case validator.ValidationErrors:
-		details = parseValidationErrors(e)
-	case error:
-		message = e.Error()
-	}
-
-	return &APPError{
-		Status:  http.StatusBadRequest,
-		Code:    "INVALID_REQUEST_MODEL",
-		Message: message,
-		Details: details,
-		Stack:   *stackTrace(1),
-	}
 }
 
 func parseValidationErrors(err validator.ValidationErrors) *StringMap {

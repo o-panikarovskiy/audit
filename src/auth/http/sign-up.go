@@ -1,9 +1,12 @@
 package http
 
 import (
-	"audit/src/components/auth/controller"
+	"audit/src/auth/controller"
+	"audit/src/context"
 	"audit/src/utils"
 	"net/http"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 // SignUpRequestModel signup DTO
@@ -13,26 +16,23 @@ type SignUpRequestModel struct {
 }
 
 // SignUp handler for create new user
-func SignUp(w http.ResponseWriter, r *http.Request) {
+func SignUp(res http.ResponseWriter, req *http.Request) {
 	var model SignUpRequestModel
-	err := utils.DecodeJSONBody(r, &model)
+	err := mapstructure.Decode(context.GetContext(req).JSON(), &model)
 
 	if err != nil {
-		utils.SendError(w, err)
-		return
+		panic(err)
 	}
 
 	err = utils.ValidateModel(model)
 	if err != nil {
-		utils.SendError(w, err)
-		return
+		panic(err)
 	}
 
 	user, err := controller.SignUp(model.Email, model.Password)
 	if err != nil {
-		utils.SendError(w, err)
-		return
+		panic(err)
 	}
 
-	utils.Send(w, user)
+	utils.SendJSON(res, http.StatusOK, user)
 }
