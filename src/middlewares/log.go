@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"audit/src/config"
+	"audit/src/di"
 	"log"
 	"net/http"
 	"time"
@@ -13,7 +13,7 @@ func MdlwLog(next http.Handler) http.Handler {
 		start := time.Now()
 
 		defer func() {
-			cfg := config.GetCurrentConfig()
+			cfg := di.Get().GetAppConfig()
 			maxElapsed := cfg.LogRequestAfterMs * time.Millisecond
 
 			if d := time.Since(start); d > maxElapsed {

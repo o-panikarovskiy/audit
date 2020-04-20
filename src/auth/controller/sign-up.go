@@ -1,7 +1,13 @@
 package controller
 
 import (
+	"audit/src/di"
+	"audit/src/middlewares"
+	"audit/src/utils"
+	"audit/src/utils/res"
 	"net/http"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 // SignUpRequestModel signup DTO
@@ -12,25 +18,26 @@ type SignUpRequestModel struct {
 
 // SignUp handler for create new user
 func SignUp(w http.ResponseWriter, r *http.Request) {
-	// var model SignUpRequestModel
-	// err := mapstructure.Decode(injector.GetContext(r).JSON(), &model)
+	var model SignUpRequestModel
+	err := mapstructure.Decode(middlewares.GetContext(r).JSON(), &model)
 
-	// if err != nil {
-	// 	res.ToError(w, http.StatusBadRequest, err, "INVALID_REQUEST_MODEL")
-	// 	return
-	// }
+	if err != nil {
+		res.ToError(w, http.StatusBadRequest, err, "INVALID_REQUEST_MODEL")
+		return
+	}
 
-	// err = utils.ValidateModel(model)
-	// if err != nil {
-	// 	res.ToError(w, http.StatusBadRequest, err)
-	// 	return
-	// }
+	err = utils.ValidateModel(model)
+	if err != nil {
+		res.ToError(w, http.StatusBadRequest, err)
+		return
+	}
 
-	// user, err := controller.SignUp(model.Email, model.Password)
-	// if err != nil {
-	// 	res.ToError(w, http.StatusBadRequest, err)
-	// 	return
-	// }
+	service := di.Get().GetUserService()
+	user, err := service.Register(model.Email, model.Password)
+	if err != nil {
+		res.ToError(w, http.StatusBadRequest, err)
+		return
+	}
 
-	// res.ToJSON(w, http.StatusOK, user)
+	res.ToJSON(w, http.StatusOK, user)
 }

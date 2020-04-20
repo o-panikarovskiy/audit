@@ -1,14 +1,14 @@
 package res
 
 import (
-	"audit/src/config"
+	"audit/src/di"
 	"audit/src/utils"
 	"net/http"
 )
 
 // ToError sends error
 func ToError(res http.ResponseWriter, status int, err error, msg ...string) error {
-	cfg := config.GetCurrentConfig()
+	cfg := di.Get().GetAppConfig()
 	var appErr *utils.AppError
 
 	switch e := err.(type) {

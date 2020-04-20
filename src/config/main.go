@@ -8,15 +8,8 @@ import (
 	"path/filepath"
 )
 
-var currentConfig *AppConfig = nil
-
-// GetCurrentConfig return current config
-func GetCurrentConfig() *AppConfig {
-	return currentConfig
-}
-
-// ReadConfig parses command line arguments and read json config
-func ReadConfig() *AppConfig {
+// NewDefaultConfig parses command line arguments and read json config
+func NewDefaultConfig() *AppConfig {
 	if len(os.Args) < 2 {
 		log.Panicln("Please, specify the config file")
 	}
@@ -26,9 +19,9 @@ func ReadConfig() *AppConfig {
 		log.Panicln(err)
 	}
 
-	currentConfig = readConfigFile(path)
-	return currentConfig
+	return readConfigFile(path)
 }
+
 func readConfigFile(path string) *AppConfig {
 	jsonFile, err := os.Open(path)
 	if err != nil {

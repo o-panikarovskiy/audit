@@ -17,7 +17,7 @@ func GetRoutes(router *mux.Router) {
 	sub.HandleFunc("/check", controller.CheckSession).Methods("GET")
 
 	singUp := middlewares.MdlwJSON(http.HandlerFunc(controller.SignUp))
-	signIn := middlewares.MdlwJSON(http.HandlerFunc(controller.SignUp))
+	signIn := middlewares.MdlwJSON(http.HandlerFunc(controller.SignIn))
 
 	sub.Handle("/signup", singUp).Methods("POST")
 	sub.Handle("/signin", signIn).Methods("POST")

@@ -9,7 +9,9 @@ import (
 )
 
 func main() {
-	inst := server.NewInstance(config.ReadConfig())
+	cfg := config.NewDefaultConfig()
+	inst := server.NewInstance(cfg)
+
 	inst.Run()
 
 	c := make(chan os.Signal, 1)

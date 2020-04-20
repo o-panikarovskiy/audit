@@ -3,6 +3,7 @@ package server
 import (
 	"audit/src/config"
 	"audit/src/di"
+	"audit/src/user"
 	"net/http"
 )
 
@@ -18,23 +19,23 @@ func NewInstance(cfg *config.AppConfig) *Instance {
 		cfg:        cfg,
 		httpServer: createHTTPServer(cfg),
 	}
-
 	return inst
 }
 
 // Run instanse
 func (inst *Instance) Run() {
-	initEntities(inst.cfg)
+	rep := user.NewTestRepository()
+
+	di.New(
+		inst.cfg,
+		user.NewUserStore(rep),
+	)
+
 	addSocketEventListeners(inst.cfg)
-
-	di.New(inst.cfg)
-
-	// Run our server in a goroutine so that it doesn't block.
 	go runHTTPServer(inst.httpServer)
 }
 
 // Stop instanse
 func (inst *Instance) Stop() {
-	shutDownEntities(inst.cfg)
 	shutdownHTTPServer(inst.httpServer, inst.cfg)
 }
