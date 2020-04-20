@@ -1,8 +1,8 @@
 package auth
 
 import (
+	"audit/src/auth/events"
 	"audit/src/auth/handlers"
-	authSockets "audit/src/auth/sockets"
 	"audit/src/middlewares"
 	"audit/src/sockets"
 	"net/http"
@@ -26,7 +26,7 @@ func GetRoutes(router *mux.Router) {
 // GetSocketEvents set auth routes
 func GetSocketEvents() sockets.SocketHandlers {
 	return &[]sockets.SocketHandler{
-		{Event: "app:prime", Handler: authSockets.SendPrime},
-		{Event: "app:prime:broadcast", Handler: authSockets.SendPrimeBroadcast},
+		{Event: "app:prime", Handler: events.SendPrime},
+		{Event: "app:prime:broadcast", Handler: events.SendPrimeBroadcast},
 	}
 }

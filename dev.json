@@ -3,5 +3,10 @@
     "env": "dev",
     "gracefulTimeout": 15,
     "staticDir": "./client/dist",
-    "logRequestAfterMs": 100
+    "logRequestAfterMs": 100,
+    "sessionAge": 604800,
+    "redis": {
+        "host": "3.231.157.135",        
+        "port": 6379
+    }
 }

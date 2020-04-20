@@ -11,6 +11,11 @@ type AppConfig struct {
 	GracefulTimeout   time.Duration `json:"gracefulTimeout"`
 	StaticDir         string        `json:"staticDir"`
 	LogRequestAfterMs time.Duration `json:"logRequestAfterMs"`
+	SessionAge        int           `json:"sessionAge"`
+	Redis             struct {
+		Port int
+		Host string
+	} `json:"redis"`
 }
 
 const (

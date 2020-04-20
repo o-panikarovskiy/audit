@@ -1,4 +1,4 @@
-package sockets
+package events
 
 import (
 	"audit/src/sockets"
