@@ -21,7 +21,7 @@ type SignInResModel struct {
 }
 
 // SignIn func
-func SignIn(json *utils.StringMap) (*SignInResModel, error) {
+func SignIn(json *map[string]interface{}) (*SignInResModel, error) {
 	model, err := validateSignIn(json)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func SignIn(json *utils.StringMap) (*SignInResModel, error) {
 	return &SignInResModel{User: user, SID: sid}, nil
 }
 
-func validateSignIn(json *utils.StringMap) (*SignInReqModel, error) {
+func validateSignIn(json *map[string]interface{}) (*SignInReqModel, error) {
 	var model SignInReqModel
 	err := mapstructure.Decode(json, &model)
 

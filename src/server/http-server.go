@@ -14,12 +14,21 @@ import (
 var httpServer *http.Server
 
 func createHTTPServer(cfg *config.AppConfig) *http.Server {
+	wt := time.Second * 15
+	rt := time.Second * 15
+	it := time.Second * 60
+	if cfg.IsDev() {
+		wt = 0
+		rt = 0
+		it = 0
+	}
+
 	srv := &http.Server{
 		Addr: fmt.Sprintf("0.0.0.0:%d", cfg.Port),
 		// Good practice to set timeouts to avoid Slowloris attacks.
-		WriteTimeout:      time.Second * 15,
-		IdleTimeout:       time.Second * 60,
-		ReadHeaderTimeout: time.Second * 15,
+		WriteTimeout:      wt,
+		IdleTimeout:       it,
+		ReadHeaderTimeout: rt,
 		Handler:           routes.CreateRouter(cfg),
 	}
 

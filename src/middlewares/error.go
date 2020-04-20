@@ -19,7 +19,7 @@ func MdlwError(next http.Handler) http.Handler {
 			log.Println("api error: ", r)
 
 			if err, ok := r.(error); ok {
-				res.ToError(w, http.StatusInternalServerError, err)
+				res.SendStatusError(w, http.StatusInternalServerError, err)
 			} else {
 				http.Error(w, "Unknown error", http.StatusInternalServerError)
 			}

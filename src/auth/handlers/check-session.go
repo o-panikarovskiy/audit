@@ -1,17 +1,23 @@
 package handlers
 
 import (
+	"audit/src/auth/controllers"
+	"audit/src/middlewares"
+	"audit/src/utils/res"
 	"net/http"
 )
 
 // CheckSession handler
 func CheckSession(w http.ResponseWriter, r *http.Request) {
-	// user, err := controller.CheckSession("test")
+	sid := middlewares.GetContext(r).GetSessionID()
+	sessionUser := middlewares.GetContext(r).GetSessionUser()
 
-	// if err != nil {
-	// 	res.ToError(w, http.StatusBadRequest, err)
-	// 	return
-	// }
+	user, err := controllers.CheckSession(sid, sessionUser)
 
-	// res.ToJSON(w, http.StatusOK, user)
+	if err != nil {
+		res.SendStatusError(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	res.SendJSON(w, http.StatusOK, user)
 }

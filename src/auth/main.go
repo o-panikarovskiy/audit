@@ -14,13 +14,13 @@ import (
 func GetRoutes(router *mux.Router) {
 	sub := router.PathPrefix("/auth").Subrouter()
 
-	sub.HandleFunc("/check", handlers.CheckSession).Methods("GET")
-
 	singUp := middlewares.MdlwJSON(http.HandlerFunc(handlers.SignUp))
 	signIn := middlewares.MdlwJSON(http.HandlerFunc(handlers.SignIn))
+	checkSession := middlewares.MdlwSession(http.HandlerFunc(handlers.CheckSession))
 
 	sub.Handle("/signup", singUp).Methods("POST")
 	sub.Handle("/signin", signIn).Methods("POST")
+	sub.Handle("/check", checkSession).Methods("GET")
 }
 
 // GetSocketEvents set auth routes

@@ -5,6 +5,7 @@ import (
 	"audit/src/di"
 	"audit/src/sessions"
 	"audit/src/user"
+	"audit/src/user/defusersrv"
 )
 
 func createDevInstase(cfg *config.AppConfig) *Instance {
@@ -19,7 +20,7 @@ func createDevInstase(cfg *config.AppConfig) *Instance {
 
 	deps.Register(cfg)
 	deps.Register(ses)
-	deps.Register(user.NewUserService(rep, ses, cfg))
+	deps.Register(defusersrv.NewDefaultUserService(rep, ses, cfg))
 
 	di.Set(deps)
 

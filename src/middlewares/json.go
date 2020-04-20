@@ -4,34 +4,17 @@ import (
 	"audit/src/utils"
 	"audit/src/utils/res"
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 )
-
-// WithJSON put json to context
-func (ctx Context) WithJSON(data *utils.StringMap) Context {
-	return Context{context.WithValue(ctx, jsonKey, data)}
-}
-
-// JSON get json data from context
-func (ctx Context) JSON() *utils.StringMap {
-	val, ok := ctx.Value(jsonKey).(*utils.StringMap)
-
-	if !ok {
-		panic(fmt.Errorf("Failed to get value from context %v by key %v", val, jsonKey))
-	}
-
-	return val
-}
 
 // MdlwJSON try to parse json from req.Body
 func MdlwJSON(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		data, err := decodeJSON(r)
 		if err != nil {
-			res.ToError(w, http.StatusBadRequest, err)
+			res.SendStatusError(w, http.StatusBadRequest, err)
 			return
 		}
 
@@ -45,19 +28,27 @@ func MdlwJSON(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func decodeJSON(req *http.Request) (*utils.StringMap, error) {
-	ct := req.Header.Get("Content-Type")
+// WithJSON put json to context
+func (ctx Context) WithJSON(data *map[string]interface{}) Context {
+	return Context{context.WithValue(ctx, jsonKey, data)}
+}
+
+// JSON get json data from context
+func (ctx Context) JSON() *map[string]interface{} {
+	val, ok := ctx.Value(jsonKey).(*map[string]interface{})
+
+	if !ok {
+		panic(fmt.Errorf("Failed to get value from context %v by key %v", val, jsonKey))
+	}
+
+	return val
+}
+
+func decodeJSON(r *http.Request) (*map[string]interface{}, error) {
+	ct := r.Header.Get("Content-Type")
 	if !strings.HasPrefix(ct, "application/json") {
 		return nil, utils.NewAppError("INVALID_HEADERS", "Content-Type header is not application/json")
 	}
 
-	dest := make(utils.StringMap)
-	dec := json.NewDecoder(req.Body)
-	err := dec.Decode(&dest)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &dest, nil
+	return utils.JSONParseReader(r.Body)
 }

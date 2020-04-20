@@ -5,8 +5,12 @@
     "staticDir": "./client/dist",
     "logRequestAfterMs": 100,
     "sessionAge": 604800,
+    "cookie": {
+        "hash": "6db19803038b4a8bce21e8be9ffbbd4f",
+        "block": "a24e728efcbfdd9e670da3884eceb48b"
+    },
     "redis": {
-        "host": "3.231.157.135",        
+        "host": "3.231.157.135",
         "port": 6379
     }
 }

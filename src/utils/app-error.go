@@ -46,6 +46,29 @@ func (e *AppError) Error() string {
 	return fmt.Sprintf("%v: %v", e.Code, e.Message)
 }
 
+// ToAppError convert error to *AppError
+func ToAppError(err error, msg ...string) *AppError {
+	switch e := err.(type) {
+	case *AppError:
+		return e
+	default:
+		code := "APP_ERROR"
+		var details []string
+
+		if len(msg) > 0 {
+			code = msg[0]
+			details = msg[1:]
+		}
+
+		return &AppError{
+			Code:    code,
+			Message: err.Error(),
+			Err:     err,
+			Details: details,
+		}
+	}
+}
+
 // GetErrorStack wraps error and return stack frames
 func GetErrorStack(err error, skip int) []StackFrame {
 	err = errors.WithStack(err)

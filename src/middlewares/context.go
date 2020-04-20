@@ -11,6 +11,7 @@ type ctxKeyType int
 const (
 	jsonKey ctxKeyType = iota
 	sessionKey
+	sessionUserKey
 	// ...
 )
 

@@ -12,9 +12,13 @@ type AppConfig struct {
 	StaticDir         string        `json:"staticDir"`
 	LogRequestAfterMs time.Duration `json:"logRequestAfterMs"`
 	SessionAge        int           `json:"sessionAge"`
-	Redis             struct {
-		Port int
-		Host string
+	Cookie            struct {
+		Hash  string `json:"hash"`
+		Block string `json:"block"`
+	} `json:"cookie"`
+	Redis struct {
+		Port int    `json:"port"`
+		Host string `json:"host"`
 	} `json:"redis"`
 }
 

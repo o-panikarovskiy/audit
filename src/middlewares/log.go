@@ -10,10 +10,10 @@ import (
 // MdlwLog create log middleware
 func MdlwLog(next http.Handler) http.Handler {
 	fn := func(res http.ResponseWriter, req *http.Request) {
+		cfg := di.GetAppConfig()
 		start := time.Now()
 
 		defer func() {
-			cfg := di.GetAppConfig()
 			maxElapsed := cfg.LogRequestAfterMs * time.Millisecond
 
 			if d := time.Since(start); d > maxElapsed {
