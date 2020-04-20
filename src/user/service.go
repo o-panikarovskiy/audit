@@ -8,4 +8,5 @@ type IService interface {
 	Auth(string, string) (*User, error)
 	CheckSession(string) (*User, error)
 	GetRepo() IRepository
+	ShutDown()
 }

@@ -78,3 +78,7 @@ func (s *userService) Update(user *User) (*User, error) {
 func (s *userService) GetRepo() IRepository {
 	return s.repo
 }
+
+func (s *userService) ShutDown() {
+	s.repo.ShutDown()
+}

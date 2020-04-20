@@ -3,13 +3,31 @@ package middlewares
 import (
 	"audit/src/utils"
 	"audit/src/utils/res"
+	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 )
 
-// WithJSON try to parse json from req.Body
-func WithJSON(next http.Handler) http.Handler {
+// WithJSON put json to context
+func (ctx Context) WithJSON(data *utils.StringMap) Context {
+	return Context{context.WithValue(ctx, jsonKey, data)}
+}
+
+// JSON get json data from context
+func (ctx Context) JSON() *utils.StringMap {
+	val, ok := ctx.Value(jsonKey).(*utils.StringMap)
+
+	if !ok {
+		panic(fmt.Errorf("Failed to get value from context %v by key %v", val, jsonKey))
+	}
+
+	return val
+}
+
+// MdlwJSON try to parse json from req.Body
+func MdlwJSON(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		data, err := decodeJSON(r)
 		if err != nil {

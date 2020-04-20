@@ -1,9 +1,17 @@
 package controller
 
-import "audit/src/user"
+import (
+	"net/http"
+)
 
-// CheckSession checks user session by id
-func CheckSession(sessionID string) (*user.User, error) {
-	service := user.GetService()
-	return service.CheckSession(sessionID)
+// CheckSession handler
+func CheckSession(w http.ResponseWriter, r *http.Request) {
+	// user, err := controller.CheckSession("test")
+
+	// if err != nil {
+	// 	res.ToError(w, http.StatusBadRequest, err)
+	// 	return
+	// }
+
+	// res.ToJSON(w, http.StatusOK, user)
 }

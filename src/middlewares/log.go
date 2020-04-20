@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-// WithLog create log middleware
-func WithLog(next http.Handler) http.Handler {
+// MdlwLog create log middleware
+func MdlwLog(next http.Handler) http.Handler {
 	fn := func(res http.ResponseWriter, req *http.Request) {
 		start := time.Now()
 

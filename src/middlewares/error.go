@@ -7,8 +7,8 @@ import (
 	"audit/src/utils/res"
 )
 
-// WithError global handle error
-func WithError(next http.Handler) http.Handler {
+// MdlwError global handle error
+func MdlwError(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			r := recover()

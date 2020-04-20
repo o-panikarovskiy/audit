@@ -1,27 +1,23 @@
 package user
 
-import "audit/src/config"
-
-var service IService
-var repository IRepository
+import (
+	"audit/src/config"
+)
 
 // Init db coonection and services
-func Init(cfg *config.AppConfig) {
+func Init(cfg *config.AppConfig) IService {
+	var repository IRepository
+
 	if cfg.IsDev() || cfg.IsTest() {
 		repository = NewTestRepository()
 	} else {
 		repository = NewPostgreSQLRepository("some pool")
 	}
 
-	service = NewUserService(repository)
-}
-
-// GetService returns Service that implements business logic
-func GetService() IService {
-	return service
+	return NewUserService(repository)
 }
 
 // ShutDown allows grasefull exit
-func ShutDown(cfg *config.AppConfig) {
-	repository.ShutDown()
+func ShutDown(srv IService, cfg *config.AppConfig) {
+	srv.ShutDown()
 }

@@ -2,8 +2,7 @@ package server
 
 import (
 	"audit/src/config"
-	"fmt"
-	"log"
+	"audit/src/di"
 	"net/http"
 )
 
@@ -28,13 +27,10 @@ func (inst *Instance) Run() {
 	initEntities(inst.cfg)
 	addSocketEventListeners(inst.cfg)
 
+	di.New(inst.cfg)
+
 	// Run our server in a goroutine so that it doesn't block.
-	go func() {
-		log.Println(fmt.Sprintf("Server start listening on %d port", inst.cfg.Port))
-		if err := inst.httpServer.ListenAndServe(); err != nil {
-			panic(err)
-		}
-	}()
+	go runHTTPServer(inst.httpServer)
 }
 
 // Stop instanse

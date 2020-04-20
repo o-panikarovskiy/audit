@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -32,4 +33,11 @@ func shutdownHTTPServer(srv *http.Server, cfg *config.AppConfig) {
 	// Doesn't block if no connections, but will otherwise wait
 	// until the timeout deadline.
 	srv.Shutdown(ctx)
+}
+
+func runHTTPServer(srv *http.Server) {
+	log.Println(fmt.Sprintf("Server start listening on %v", srv.Addr))
+	if err := srv.ListenAndServe(); err != nil {
+		panic(err)
+	}
 }
