@@ -9,17 +9,12 @@ import (
 
 // SignIn login handler
 func SignIn(w http.ResponseWriter, r *http.Request) {
-	model, err := controllers.ValidateSignIn(middlewares.GetContext(r).JSON())
-	if err != nil {
-		res.ToError(w, http.StatusBadRequest, err, "INVALID_REQUEST_MODEL")
-		return
-	}
+	model, err := controllers.SignIn(middlewares.GetContext(r).JSON())
 
-	user, err := controllers.SignIn(model)
 	if err != nil {
 		res.ToError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	res.ToJSON(w, http.StatusOK, user)
+	res.ToJSON(w, http.StatusOK, model)
 }

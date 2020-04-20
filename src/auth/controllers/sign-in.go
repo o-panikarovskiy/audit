@@ -8,7 +8,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// SignInReqModel model
+// SignInReqModel struct
 type SignInReqModel struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
@@ -21,7 +21,12 @@ type SignInResModel struct {
 }
 
 // SignIn func
-func SignIn(model *SignInReqModel) (*SignInResModel, error) {
+func SignIn(json *utils.StringMap) (*SignInResModel, error) {
+	model, err := validateSignIn(json)
+	if err != nil {
+		return nil, err
+	}
+
 	user, sid, err := di.GetUserService().Auth(model.Username, model.Password)
 	if err != nil {
 		return nil, err
@@ -30,8 +35,7 @@ func SignIn(model *SignInReqModel) (*SignInResModel, error) {
 	return &SignInResModel{User: user, SID: sid}, nil
 }
 
-// ValidateSignIn func
-func ValidateSignIn(json *utils.StringMap) (*SignInReqModel, error) {
+func validateSignIn(json *utils.StringMap) (*SignInReqModel, error) {
 	var model SignInReqModel
 	err := mapstructure.Decode(json, &model)
 

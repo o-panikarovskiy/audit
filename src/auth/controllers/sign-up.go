@@ -21,7 +21,12 @@ type SignUpResModel struct {
 }
 
 // SignUp func
-func SignUp(model *SignUpReqModel) (*SignUpResModel, error) {
+func SignUp(json *utils.StringMap) (*SignUpResModel, error) {
+	model, err := validateSignUp(json)
+	if err != nil {
+		return nil, err
+	}
+
 	user, sid, err := di.GetUserService().Register(model.Email, model.Password)
 	if err != nil {
 		return nil, err
@@ -30,8 +35,7 @@ func SignUp(model *SignUpReqModel) (*SignUpResModel, error) {
 	return &SignUpResModel{User: user, SID: sid}, nil
 }
 
-// ValidateSignUp func
-func ValidateSignUp(json *utils.StringMap) (*SignUpReqModel, error) {
+func validateSignUp(json *utils.StringMap) (*SignUpReqModel, error) {
 	var model SignUpReqModel
 	err := mapstructure.Decode(json, &model)
 
