@@ -5,7 +5,7 @@ import (
 
 	"audit/src/auth"
 	"audit/src/config"
-	"audit/src/context"
+	"audit/src/routes/middlewares"
 	"audit/src/sockets"
 
 	"github.com/gorilla/mux"
@@ -19,12 +19,12 @@ func CreateRouter(cfg *config.AppConfig) http.Handler {
 	api.HandleFunc("/health", health).Methods("GET")
 	api.HandleFunc("/ws", sockets.HTTPUpgradeHandler).Methods("GET")
 
-	api.Use(WithError)
-	api.Use(context.WithTypedContext)
-	api.Use(WithJSON)
-	api.Use(WithLog)
+	api.Use(middlewares.WithError)
+	api.Use(middlewares.WithTypedContext)
+	api.Use(middlewares.WithAppConfig)
+	api.Use(middlewares.WithLog)
 
-	setSubRoutes(api, "/auth", auth.GetRoutes())
+	auth.GetRoutes(api)
 
 	api.NotFoundHandler = http.HandlerFunc(notFound)
 	api.MethodNotAllowedHandler = http.HandlerFunc(notAllowed)

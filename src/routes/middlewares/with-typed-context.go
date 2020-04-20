@@ -1,6 +1,8 @@
-package context
+package middlewares
 
-import "net/http"
+import (
+	"net/http"
+)
 
 // WithTypedContext middleware for returning Context
 func WithTypedContext(next http.Handler) http.Handler {

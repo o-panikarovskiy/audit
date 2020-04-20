@@ -2,8 +2,9 @@ package http
 
 import (
 	"audit/src/auth/controller"
-	"audit/src/context"
+	"audit/src/routes/middlewares"
 	"audit/src/utils"
+	"audit/src/utils/res"
 	"net/http"
 
 	"github.com/mitchellh/mapstructure"
@@ -16,26 +17,26 @@ type SignUpRequestModel struct {
 }
 
 // SignUp handler for create new user
-func SignUp(res http.ResponseWriter, req *http.Request) {
+func SignUp(w http.ResponseWriter, r *http.Request) {
 	var model SignUpRequestModel
-	err := mapstructure.Decode(context.GetContext(req).JSON(), &model)
+	err := mapstructure.Decode(middlewares.GetContext(r).JSON(), &model)
 
 	if err != nil {
-		utils.ToError(res, 400, err)
+		res.ToError(w, http.StatusBadRequest, err, "INVALID_REQUEST_MODEL")
 		return
 	}
 
 	err = utils.ValidateModel(model)
 	if err != nil {
-		utils.ToError(res, 400, err)
+		res.ToError(w, http.StatusBadRequest, err)
 		return
 	}
 
 	user, err := controller.SignUp(model.Email, model.Password)
 	if err != nil {
-		utils.ToError(res, 400, err)
+		res.ToError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	utils.ToJSON(res, http.StatusOK, user)
+	res.ToJSON(w, http.StatusOK, user)
 }

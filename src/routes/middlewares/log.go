@@ -1,4 +1,4 @@
-package routes
+package middlewares
 
 import (
 	"audit/src/config"

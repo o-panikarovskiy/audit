@@ -1,19 +1,21 @@
 package auth
 
 import (
-	"audit/src/auth/http"
+	authHttp "audit/src/auth/http"
 	authSockets "audit/src/auth/sockets"
+	"audit/src/routes/middlewares"
 	"audit/src/sockets"
-	"audit/src/utils"
+	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 // GetRoutes set auth routes
-func GetRoutes() utils.RouteHandlers {
-	return &[]utils.RouteHandler{
-		{Route: "/check", Method: "GET", Handler: http.CheckSession},
-		{Route: "/signup", Method: "POST", Handler: http.SignUp},
-		{Route: "/signin", Method: "POST", Handler: http.SignIn},
-	}
+func GetRoutes(router *mux.Router) {
+	sub := router.PathPrefix("/auth").Subrouter()
+	sub.HandleFunc("/check", authHttp.CheckSession).Methods("GET")
+	sub.Handle("/signup", middlewares.WithJSON(http.HandlerFunc(authHttp.SignUp))).Methods("POST")
+	sub.Handle("/signin", middlewares.WithJSON(http.HandlerFunc(authHttp.SignIn))).Methods("POST")
 }
 
 // GetSocketEvents set auth routes

@@ -1,8 +1,8 @@
-package routes
+package middlewares
 
 import (
-	"audit/src/context"
 	"audit/src/utils"
+	"audit/src/utils/res"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -10,17 +10,18 @@ import (
 
 // WithJSON try to parse json from req.Body
 func WithJSON(next http.Handler) http.Handler {
-	fn := func(res http.ResponseWriter, req *http.Request) {
-		data, err := decodeJSON(req)
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		data, err := decodeJSON(r)
 		if err != nil {
-			utils.ToError(res, http.StatusBadRequest, err)
+			res.ToError(w, http.StatusBadRequest, err)
 			return
 		}
 
-		ctx := context.GetContext(req)
+		ctx := GetContext(r)
 		ctx = ctx.WithJSON(data)
-		req = req.WithContext(ctx)
-		next.ServeHTTP(res, req)
+		r = r.WithContext(ctx)
+
+		next.ServeHTTP(w, r)
 	}
 
 	return http.HandlerFunc(fn)
@@ -29,7 +30,7 @@ func WithJSON(next http.Handler) http.Handler {
 func decodeJSON(req *http.Request) (*utils.StringMap, error) {
 	ct := req.Header.Get("Content-Type")
 	if !strings.HasPrefix(ct, "application/json") {
-		return nil, utils.NewAppError(http.StatusBadRequest, "INVALID_HEADERS", "Content-Type header is not application/json")
+		return nil, utils.NewAppError("INVALID_HEADERS", "Content-Type header is not application/json")
 	}
 
 	dest := make(utils.StringMap)

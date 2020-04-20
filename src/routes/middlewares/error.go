@@ -1,10 +1,10 @@
-package routes
+package middlewares
 
 import (
 	"log"
 	"net/http"
 
-	"audit/src/utils"
+	"audit/src/utils/res"
 )
 
 // WithError global handle error
@@ -19,11 +19,10 @@ func WithError(next http.Handler) http.Handler {
 			log.Println("api error: ", r)
 
 			if err, ok := r.(error); ok {
-				utils.ToError(w, http.StatusInternalServerError, err)
+				res.ToError(w, http.StatusInternalServerError, err)
 			} else {
 				http.Error(w, "Unknown error", http.StatusInternalServerError)
 			}
-
 		}()
 
 		next.ServeHTTP(w, r)
