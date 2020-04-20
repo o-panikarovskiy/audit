@@ -21,5 +21,4 @@ func createDevInstase(cfg *config.AppConfig) *Instance {
 		cfg:        cfg,
 		httpServer: createHTTPServer(cfg),
 	}
-
 }

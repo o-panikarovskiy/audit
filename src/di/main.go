@@ -17,7 +17,7 @@ type ServiceLocator struct {
 // Set set locator
 func Set(deps *ServiceLocator) {
 	if instanseDeps != nil {
-		panic(fmt.Errorf("Injector must be singleton"))
+		panic(fmt.Errorf("Service Locator must be singleton"))
 	}
 	instanseDeps = deps
 }

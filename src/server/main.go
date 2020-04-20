@@ -2,6 +2,7 @@ package server
 
 import (
 	"audit/src/config"
+	"audit/src/di"
 	"net/http"
 )
 
@@ -26,5 +27,6 @@ func (inst *Instance) Run() {
 
 // Stop instanse
 func (inst *Instance) Stop() {
+	di.GetUserService().ShutDown()
 	shutdownHTTPServer(inst.httpServer, inst.cfg)
 }
