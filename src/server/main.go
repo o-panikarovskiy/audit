@@ -2,8 +2,6 @@ package server
 
 import (
 	"audit/src/config"
-	"audit/src/di"
-	"audit/src/user"
 	"net/http"
 )
 
@@ -15,23 +13,14 @@ type Instance struct {
 
 // NewInstance create new Instance
 func NewInstance(cfg *config.AppConfig) *Instance {
-	inst := &Instance{
-		cfg:        cfg,
-		httpServer: createHTTPServer(cfg),
+	if cfg.IsDev() {
+		return createDevInstase(cfg)
 	}
-	return inst
+	return nil
 }
 
 // Run instanse
 func (inst *Instance) Run() {
-	rep := user.NewTestRepository()
-
-	di.New(
-		inst.cfg,
-		user.NewUserStore(rep),
-	)
-
-	addSocketEventListeners(inst.cfg)
 	go runHTTPServer(inst.httpServer)
 }
 

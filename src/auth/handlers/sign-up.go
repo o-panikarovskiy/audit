@@ -1,4 +1,4 @@
-package controller
+package handlers
 
 import (
 	"audit/src/di"
@@ -10,30 +10,36 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// SignUpRequestModel signup DTO
-type SignUpRequestModel struct {
+type signUpModel struct {
 	Email    string `json:"email" validate:"required,email,max=256"`
 	Password string `json:"password" validate:"required,min=8,max=256"`
 }
 
-// SignUp handler for create new user
-func SignUp(w http.ResponseWriter, r *http.Request) {
-	var model SignUpRequestModel
+func validateSignUpModel(r *http.Request) (*signUpModel, error) {
+	var model signUpModel
 	err := mapstructure.Decode(middlewares.GetContext(r).JSON(), &model)
 
+	if err != nil {
+		return nil, err
+	}
+
+	err = utils.ValidateModel(model)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model, nil
+}
+
+// SignUp user register handler
+func SignUp(w http.ResponseWriter, r *http.Request) {
+	model, err := validateSignUpModel(r)
 	if err != nil {
 		res.ToError(w, http.StatusBadRequest, err, "INVALID_REQUEST_MODEL")
 		return
 	}
 
-	err = utils.ValidateModel(model)
-	if err != nil {
-		res.ToError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	service := di.Get().GetUserService()
-	user, err := service.Register(model.Email, model.Password)
+	user, err := di.GetUserService().Register(model.Email, model.Password)
 	if err != nil {
 		res.ToError(w, http.StatusBadRequest, err)
 		return

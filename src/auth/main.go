@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"audit/src/auth/controller"
+	"audit/src/auth/handlers"
 	authSockets "audit/src/auth/sockets"
 	"audit/src/middlewares"
 	"audit/src/sockets"
@@ -14,10 +14,10 @@ import (
 func GetRoutes(router *mux.Router) {
 	sub := router.PathPrefix("/auth").Subrouter()
 
-	sub.HandleFunc("/check", controller.CheckSession).Methods("GET")
+	sub.HandleFunc("/check", handlers.CheckSession).Methods("GET")
 
-	singUp := middlewares.MdlwJSON(http.HandlerFunc(controller.SignUp))
-	signIn := middlewares.MdlwJSON(http.HandlerFunc(controller.SignIn))
+	singUp := middlewares.MdlwJSON(http.HandlerFunc(handlers.SignUp))
+	signIn := middlewares.MdlwJSON(http.HandlerFunc(handlers.SignIn))
 
 	sub.Handle("/signup", singUp).Methods("POST")
 	sub.Handle("/signin", signIn).Methods("POST")

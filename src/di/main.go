@@ -1,37 +1,57 @@
 package di
 
 import (
-	"audit/src/config"
-	"audit/src/user"
+	"fmt"
+	"reflect"
 )
 
-// Injector struct
-type Injector struct {
-	cfg         *config.AppConfig
-	userService user.IService
+var instanseDeps *ServiceLocator
+
+// ServiceLocator struct
+type ServiceLocator struct {
+	services []interface{}
+	types    []reflect.Type
+	values   []reflect.Value
 }
 
-var deps *Injector
-
-// New create default DI
-func New(
-	cfg *config.AppConfig,
-	userService user.IService,
-) *Injector {
-
-	deps = &Injector{
-		cfg:         cfg,
-		userService: userService,
+// Set set locator
+func Set(deps *ServiceLocator) {
+	if instanseDeps != nil {
+		panic(fmt.Errorf("Injector must be singleton"))
 	}
-
-	return deps
+	instanseDeps = deps
 }
 
-// Get returns current DI
-func Get() *Injector { return deps }
+// Get ret locator
+func Get() *ServiceLocator {
+	return instanseDeps
+}
 
-// GetAppConfig return service
-func (di *Injector) GetAppConfig() *config.AppConfig { return di.cfg }
+// Register name
+func (s *ServiceLocator) Register(some interface{}) {
+	s.services = append(s.services, some)
+	s.types = append(s.types, reflect.TypeOf(some))
+	s.values = append(s.values, reflect.ValueOf(some))
+}
 
-// GetUserService return service
-func (di *Injector) GetUserService() user.IService { return di.userService }
+// Get name
+func (s *ServiceLocator) Get(some interface{}) bool {
+	k := reflect.TypeOf(some).Elem()
+	kind := k.Kind()
+	if kind == reflect.Ptr {
+		k = k.Elem()
+		kind = k.Kind()
+	}
+	for i, t := range s.types {
+		if kind == reflect.Interface && t.Implements(k) {
+			reflect.Indirect(
+				reflect.ValueOf(some),
+			).Set(s.values[i])
+			return true
+		} else if kind == reflect.Struct && k.AssignableTo(t.Elem()) {
+			reflect.ValueOf(some).Elem().Set(s.values[i])
+			return true
+		}
+	}
+	return false
+}

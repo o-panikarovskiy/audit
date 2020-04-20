@@ -13,7 +13,7 @@ func MdlwLog(next http.Handler) http.Handler {
 		start := time.Now()
 
 		defer func() {
-			cfg := di.Get().GetAppConfig()
+			cfg := di.GetAppConfig()
 			maxElapsed := cfg.LogRequestAfterMs * time.Millisecond
 
 			if d := time.Since(start); d > maxElapsed {

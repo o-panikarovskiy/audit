@@ -8,7 +8,8 @@ import (
 
 // ToError sends error
 func ToError(res http.ResponseWriter, status int, err error, msg ...string) error {
-	cfg := di.Get().GetAppConfig()
+	cfg := di.GetAppConfig()
+
 	var appErr *utils.AppError
 
 	switch e := err.(type) {
