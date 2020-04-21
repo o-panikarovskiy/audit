@@ -56,8 +56,7 @@ func ToAppError(err error, msg ...string) *AppError {
 		var details []string
 
 		if len(msg) > 0 {
-			code = msg[0]
-			details = msg[1:]
+			details = msg[:]
 		}
 
 		return &AppError{
