@@ -63,9 +63,13 @@ func (r *redisStorage) Get(key string) (string, error) {
 	return val, nil
 }
 
-// GetJSON returns error if value does not exist.
+// GetJSON returns nil if value does not exist.
 func (r *redisStorage) GetJSON(key string) (*map[string]interface{}, error) {
 	str, err := r.client.Get(key).Result()
+
+	if err == redis.Nil {
+		return nil, nil
+	}
 
 	if err != nil {
 		return nil, err
@@ -79,6 +83,15 @@ func (r *redisStorage) GetJSON(key string) (*map[string]interface{}, error) {
 	}
 
 	return &res, err
+}
+
+// SetJSON set value by key and expiration in seconds
+func (r *redisStorage) SetJSON(key string, data interface{}, expiration int) error {
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	return r.Set(key, string(bytes), expiration)
 }
 
 //Set value by key and expiration in seconds

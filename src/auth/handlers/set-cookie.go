@@ -7,8 +7,7 @@ import (
 	"github.com/gorilla/securecookie"
 )
 
-// SetCookie func
-func SetCookie(w http.ResponseWriter, sid string) {
+func setAuthCookie(w http.ResponseWriter, sid string) {
 	cfg := di.GetAppConfig()
 
 	hashKey := []byte(cfg.Cookie.Hash)

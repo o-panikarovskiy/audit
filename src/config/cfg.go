@@ -11,7 +11,7 @@ type AppConfig struct {
 	GracefulTimeout   time.Duration `json:"gracefulTimeout"`
 	StaticDir         string        `json:"staticDir"`
 	LogRequestAfterMs time.Duration `json:"logRequestAfterMs"`
-	SessionAge        int           `json:"sessionAge"`
+	SessionAgeMin     int           `json:"SessionAgeMin"`
 	Cookie            struct {
 		Hash  string `json:"hash"`
 		Block string `json:"block"`

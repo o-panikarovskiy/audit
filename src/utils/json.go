@@ -3,6 +3,8 @@ package utils
 import (
 	"encoding/json"
 	"io"
+	"reflect"
+	"time"
 )
 
 // JSONStringify func
@@ -41,4 +43,13 @@ func JSONParseReader(r io.Reader) (*map[string]interface{}, error) {
 	}
 
 	return &dest, nil
+}
+
+// StringToDateTimeHook func
+func StringToDateTimeHook(f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
+	if t == reflect.TypeOf(time.Time{}) && f == reflect.TypeOf("") {
+		return time.Parse(time.RFC3339, data.(string))
+	}
+
+	return data, nil
 }

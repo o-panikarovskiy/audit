@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"audit/src/di"
-	"audit/src/user"
 	"audit/src/utils"
 
 	"github.com/mitchellh/mapstructure"
@@ -16,8 +15,7 @@ type SignUpReqModel struct {
 
 // SignUpResModel struct
 type SignUpResModel struct {
-	User *user.User `json:"user"`
-	SID  string     `json:"sid" `
+	TokenID string `json:"sid" `
 }
 
 // SignUp func
@@ -27,12 +25,12 @@ func SignUp(json *map[string]interface{}) (*SignUpResModel, error) {
 		return nil, err
 	}
 
-	user, sid, err := di.GetUserService().Register(model.Email, model.Password)
+	tokenID, err := di.GetUserService().SignUp(model.Email, model.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	return &SignUpResModel{User: user, SID: sid}, nil
+	return &SignUpResModel{TokenID: tokenID}, nil
 }
 
 func validateSignUp(json *map[string]interface{}) (*SignUpReqModel, error) {

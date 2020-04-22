@@ -6,9 +6,11 @@ import "audit/src/sessions"
 type IService interface {
 	IReader
 	IWriter
-	Register(string, string) (*User, string, error)
-	Auth(string, string) (*User, string, error)
-	CheckSession(string, string) (*User, error)
+	SignUp(email string, password string) (string, error)
+	EndSignUp(tokenID string) (*User, string, error)
+	Auth(email string, password string) (*User, string, error)
+	RestoreSessionUser(sid string) (*User, error)
+	CheckAuthSession(sid string) (*User, error)
 	GetRepo() IRepository
 	GetSessionStorage() sessions.IStorage
 }

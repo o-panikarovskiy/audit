@@ -2,15 +2,18 @@ package handlers
 
 import (
 	"audit/src/auth/controllers"
-	"audit/src/middlewares"
 	"audit/src/utils/res"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-// SignIn login handler
-func SignIn(w http.ResponseWriter, r *http.Request) {
-	model, err := controllers.SignIn(middlewares.GetContext(r).JSON())
+// EndRegistration handler
+func EndRegistration(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	tokenID := vars["token"]
 
+	model, err := controllers.EndSignUp(tokenID)
 	if err != nil {
 		res.SendStatusError(w, http.StatusBadRequest, err)
 		return

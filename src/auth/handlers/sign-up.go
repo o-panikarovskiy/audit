@@ -4,6 +4,7 @@ import (
 	"audit/src/auth/controllers"
 	"audit/src/middlewares"
 	"audit/src/utils/res"
+	"log"
 	"net/http"
 )
 
@@ -16,6 +17,8 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	SetCookie(w, model.SID)
-	res.SendJSON(w, http.StatusOK, &model.User)
+	// TO DO: send email
+	log.Println("Email token: ", model.TokenID)
+
+	w.WriteHeader(http.StatusNoContent)
 }

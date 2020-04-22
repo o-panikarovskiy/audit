@@ -4,7 +4,7 @@ import (
 	"audit/src/config"
 	"audit/src/di"
 	"audit/src/sessions/redisses"
-	"audit/src/user/defusersrv"
+	"audit/src/user/defservice"
 	"audit/src/user/pgrep"
 )
 
@@ -27,7 +27,7 @@ func createDevInstase(cfg *config.AppConfig) *Instance {
 	deps := &di.ServiceLocator{}
 	deps.Register(cfg)
 	deps.Register(ses)
-	deps.Register(defusersrv.NewDefaultUserService(rep, ses, cfg))
+	deps.Register(defservice.NewDefaultUserService(rep, ses, cfg))
 
 	di.Set(deps)
 

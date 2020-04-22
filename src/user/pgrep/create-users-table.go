@@ -2,7 +2,7 @@ package pgrep
 
 import "context"
 
-func (r *pgRep) createUsersTable() error {
+func (r *pgRepository) createUsersTable() error {
 	sql := `
     CREATE TABLE IF NOT EXISTS "public"."users" (
       "id"              uuid DEFAULT gen_random_uuid() PRIMARY KEY,

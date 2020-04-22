@@ -10,9 +10,7 @@ import (
 // CheckSession handler
 func CheckSession(w http.ResponseWriter, r *http.Request) {
 	sid := middlewares.GetContext(r).GetSessionID()
-	sessionUser := middlewares.GetContext(r).GetSessionUser()
-
-	user, err := controllers.CheckSession(sid, sessionUser)
+	user, err := controllers.CheckSession(sid)
 
 	if err != nil {
 		res.SendStatusError(w, http.StatusUnauthorized, err)

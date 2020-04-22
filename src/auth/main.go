@@ -17,10 +17,12 @@ func GetRoutes(router *mux.Router) {
 	singUp := middlewares.MdlwJSON(http.HandlerFunc(handlers.SignUp))
 	signIn := middlewares.MdlwJSON(http.HandlerFunc(handlers.SignIn))
 	checkSession := middlewares.MdlwSession(http.HandlerFunc(handlers.CheckSession))
+	confirm := http.HandlerFunc(handlers.EndRegistration)
 
 	sub.Handle("/signup", singUp).Methods("POST")
 	sub.Handle("/signin", signIn).Methods("POST")
 	sub.Handle("/check", checkSession).Methods("GET")
+	sub.Handle("/confirm/{token}", confirm).Methods("GET")
 }
 
 // GetSocketEvents set auth routes
