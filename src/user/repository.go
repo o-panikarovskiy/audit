@@ -17,5 +17,4 @@ type IWriter interface {
 type IRepository interface {
 	IReader
 	IWriter
-	ShutDown()
 }

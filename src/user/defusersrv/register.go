@@ -3,9 +3,12 @@ package defusersrv
 import (
 	"audit/src/user"
 	"audit/src/utils"
+	"strings"
 )
 
 func (s *userService) Register(email string, password string) (*user.User, string, error) {
+	email = strings.ToLower(email)
+
 	exUser, err := s.FindByEmail(email)
 	if err != nil {
 		return nil, "", utils.NewAppError("APP_ERROR", err.Error())
@@ -17,18 +20,21 @@ func (s *userService) Register(email string, password string) (*user.User, strin
 
 	salt := utils.RandomString(64)
 	user := &user.User{
-		ID:           utils.CreateGUID(),
 		Email:        email,
 		Role:         user.UserRole,
 		PasswordSalt: salt,
 		PasswordHash: utils.SHA512(password, salt),
 	}
 
-	sid, err := s.createAuthSession(user)
+	dbuser, err := s.Store(user)
 	if err != nil {
 		return nil, "", utils.NewAppError("APP_ERROR", err.Error())
 	}
 
-	s.Store(user)
-	return user, sid, nil
+	sid, err := s.createAuthSession(dbuser)
+	if err != nil {
+		return nil, "", utils.NewAppError("APP_ERROR", err.Error())
+	}
+
+	return dbuser, sid, nil
 }

@@ -1,7 +1,8 @@
-package sessions
+package redisses
 
 import (
 	"audit/src/config"
+	"audit/src/sessions"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -14,12 +15,10 @@ type redisStorage struct {
 	client *redis.Client
 }
 
-// NewRedisStorage create redis storage
-func NewRedisStorage(cfg *config.AppConfig) (IStorage, error) {
-	addr := fmt.Sprintf("%s:%v", cfg.Redis.Host, cfg.Redis.Port)
-
+// NewStorage create redis storage
+func NewStorage(cfg *config.AppConfig) (sessions.IStorage, error) {
 	client := redis.NewClient(&redis.Options{
-		Addr: addr,
+		Addr: cfg.Redis.ConnectionString,
 	})
 
 	log.Println("Try to ping redis...")

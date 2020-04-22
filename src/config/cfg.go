@@ -17,9 +17,16 @@ type AppConfig struct {
 		Block string `json:"block"`
 	} `json:"cookie"`
 	Redis struct {
-		Port int    `json:"port"`
-		Host string `json:"host"`
+		ConnectionString string `json:"connectionString"`
 	} `json:"redis"`
+	PG struct {
+		ConnectionString     string `json:"connectionString"`
+		PoolMinConns         int    `json:"poolMinConns"`
+		PoolMaxConns         int    `json:"poolMaxConns"`
+		MaxConnLifetimeMin   int    `json:"maxConnLifetimeMin"`
+		MaxConnIdleTimeMin   int    `json:"maxConnIdleTimeMin"`
+		HealthCheckPeriodMin int    `json:"healthCheckPeriodMin"`
+	} `json:"pg"`
 }
 
 const (

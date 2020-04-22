@@ -19,7 +19,7 @@ func SendStatusError(res http.ResponseWriter, status int, err error, msg ...stri
 
 	appErr := utils.ToAppError(err, msg...)
 
-	if code, ok := errorCodes[status]; ok {
+	if code, ok := errorCodes[status]; ok && appErr.Code == "" {
 		appErr.Code = code
 	}
 

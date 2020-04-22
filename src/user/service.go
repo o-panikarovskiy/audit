@@ -11,5 +11,4 @@ type IService interface {
 	CheckSession(string, string) (*User, error)
 	GetRepo() IRepository
 	GetSessionStorage() sessions.IStorage
-	ShutDown()
 }

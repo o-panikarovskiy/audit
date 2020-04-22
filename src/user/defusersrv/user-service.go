@@ -48,7 +48,3 @@ func (s *userService) GetRepo() user.IRepository {
 func (s *userService) GetSessionStorage() sessions.IStorage {
 	return s.sessions
 }
-
-func (s *userService) ShutDown() {
-	s.repo.ShutDown()
-}

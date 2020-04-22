@@ -37,7 +37,7 @@ func createHTTPServer(cfg *config.AppConfig) *http.Server {
 
 func shutdownHTTPServer(srv *http.Server, cfg *config.AppConfig) {
 	// Create a deadline to wait for.
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.GracefulTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.GracefulTimeout*time.Second)
 	defer cancel()
 	// Doesn't block if no connections, but will otherwise wait
 	// until the timeout deadline.

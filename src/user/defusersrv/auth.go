@@ -3,10 +3,13 @@ package defusersrv
 import (
 	"audit/src/user"
 	"audit/src/utils"
+	"strings"
 )
 
 func (s *userService) Auth(email string, password string) (*user.User, string, error) {
+	email = strings.ToLower(email)
 	user, err := s.FindByEmail(email)
+
 	if err != nil {
 		return nil, "", utils.NewAppError("APP_ERROR", err.Error())
 	}
