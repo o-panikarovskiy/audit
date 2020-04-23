@@ -17,7 +17,7 @@ func (s *userService) CheckAuthSession(sid string) (*user.User, error) {
 		return nil, &utils.AppError{Code: "AUTH_ERROR", Message: "User not found"}
 	}
 
-	dbUser, err := s.Find(sessionUser.ID)
+	dbUser, err := s.FindByID(sessionUser.ID)
 	if err != nil {
 		return nil, &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
 	}

@@ -4,7 +4,7 @@ import "audit/src/sessions"
 
 // IReader interface
 type IReader interface {
-	Find(string) (*User, error)
+	FindByID(string) (*User, error)
 	FindByUsername(string) (*User, error)
 	FindAll() ([]*User, error)
 }

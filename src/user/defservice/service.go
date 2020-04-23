@@ -28,8 +28,8 @@ func NewDefaultUserService(
 	}
 }
 
-func (s *userService) Find(id string) (*user.User, error) {
-	return s.repo.Find(id)
+func (s *userService) FindByID(id string) (*user.User, error) {
+	return s.repo.FindByID(id)
 }
 
 func (s *userService) FindByUsername(email string) (*user.User, error) {

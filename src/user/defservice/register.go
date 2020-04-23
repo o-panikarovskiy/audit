@@ -18,6 +18,13 @@ type signUpUserData struct {
 }
 
 func (s *userService) SignUp(email string, password string) (string, string, error) {
+	if email == "" || password == "" {
+		return "", "", &utils.AppError{
+			Code:    "INVALID_REQUEST_MODEL",
+			Message: "Email or password is incorrect",
+		}
+	}
+
 	email = strings.ToLower(email)
 	err := s.checkUserNotExists(email)
 	if err != nil {
@@ -38,7 +45,7 @@ func (s *userService) SignUp(email string, password string) (string, string, err
 }
 
 func (s *userService) EndSignUp(tokenID string, tokenValue string) (*user.User, string, error) {
-	usr, err := s.restoreSignUpUser(tokenID)
+	usr, err := s.restoreSignUpData(tokenID)
 	if err != nil {
 		return nil, "", err
 	}
@@ -59,13 +66,18 @@ func (s *userService) EndSignUp(tokenID string, tokenValue string) (*user.User, 
 		return nil, "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
 	}
 
+	err = s.destroySignUpData(tokenID)
+	if err != nil {
+		return nil, "", err
+	}
+
 	return dbUser, sid, nil
 }
 
-func (s *userService) restoreSignUpUser(tokenID string) (*user.User, error) {
+func (s *userService) restoreSignUpData(tokenID string) (*user.User, error) {
 	json, err := s.sessions.GetJSON(confirmEmailKey + tokenID)
 	if err != nil {
-		return nil, utils.NewAppError("APP_ERROR", err.Error())
+		return nil, &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
 	}
 
 	if json == nil {
@@ -87,6 +99,14 @@ func (s *userService) restoreSignUpUser(tokenID string) (*user.User, error) {
 	}
 
 	return u, nil
+}
+
+func (s *userService) destroySignUpData(tokenID string) error {
+	_, err := s.sessions.Delete(confirmEmailKey + tokenID)
+	if err != nil {
+		return &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
+	}
+	return nil
 }
 
 func (s *userService) storeSignUpData(email string, password string) (string, error) {

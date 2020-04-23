@@ -2,6 +2,7 @@ package testrep
 
 import (
 	"audit/src/user"
+	"audit/src/utils"
 	"log"
 )
 
@@ -20,7 +21,7 @@ func NewTestRepository() user.IRepository {
 	return rep
 }
 
-func (r *testRepo) Find(id string) (*user.User, error) {
+func (r *testRepo) FindByID(id string) (*user.User, error) {
 	for _, u := range r.users {
 		if u.ID == id {
 			return u, nil
@@ -43,6 +44,7 @@ func (r *testRepo) FindAll() ([]*user.User, error) {
 }
 
 func (r *testRepo) Store(user *user.User) (*user.User, error) {
+	user.ID = utils.CreateGUID()
 	r.users = append(r.users, user)
 	return user, nil
 }
