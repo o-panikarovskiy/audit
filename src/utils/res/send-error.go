@@ -18,6 +18,7 @@ func SendStatusError(res http.ResponseWriter, status int, err error, msg ...stri
 	cfg := di.GetAppConfig()
 
 	appErr := utils.ToAppError(err, msg...)
+	appErr.Status = status
 
 	if code, ok := errorCodes[status]; ok && appErr.Code == "" {
 		appErr.Code = code
@@ -28,4 +29,15 @@ func SendStatusError(res http.ResponseWriter, status int, err error, msg ...stri
 	}
 
 	return SendJSON(res, status, appErr)
+}
+
+// SendError sends error to http response with http status code
+func SendError(res http.ResponseWriter, err error, msg ...string) error {
+	appErr := utils.ToAppError(err, msg...)
+
+	if appErr.Status == 0 {
+		appErr.Status = http.StatusInternalServerError
+	}
+
+	return SendStatusError(res, appErr.Status, appErr)
 }

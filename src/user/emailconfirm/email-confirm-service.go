@@ -3,7 +3,7 @@ package emailconfirm
 import (
 	"audit/src/config"
 	"audit/src/user"
-	"fmt"
+	"log"
 )
 
 type emailConfirmService struct {
@@ -18,6 +18,6 @@ func NewEmailConfirmService(cfg *config.AppConfig) user.IConfirmService {
 }
 
 func (ec *emailConfirmService) Send(user *user.User, confirmID string, confirmValue string) error {
-	fmt.Printf("\n\nTry to send confirmation email to %s with token %s\n\n", user.Email, confirmID)
+	log.Printf("Try to send confirmation email to %s with token %s\n", user.Email, confirmID)
 	return nil
 }

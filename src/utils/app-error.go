@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/pkg/errors"
@@ -9,6 +10,7 @@ import (
 
 // AppError represents http error
 type AppError struct {
+	Status  int          `json:"status"`
 	Code    string       `json:"code"`
 	Message string       `json:"message"`
 	Details interface{}  `json:"details"`
@@ -60,6 +62,7 @@ func ToAppError(err error, msg ...string) *AppError {
 		}
 
 		return &AppError{
+			Status:  http.StatusInternalServerError,
 			Code:    code,
 			Message: err.Error(),
 			Err:     err,
