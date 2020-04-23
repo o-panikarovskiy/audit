@@ -1,34 +1,26 @@
-package user
+package testrep
 
 import (
+	"audit/src/user"
 	"log"
 )
 
 type testRepo struct {
-	users []*User
+	users []*user.User
 }
 
 //NewTestRepository create new repository
-func NewTestRepository() IRepository {
+func NewTestRepository() user.IRepository {
 	log.Println("Create users table...")
 
 	rep := &testRepo{
-		users: make([]*User, 0),
+		users: make([]*user.User, 0),
 	}
-
-	rep.Store(&User{
-		Email: "oleg.pnk@gmail.com",
-		Role:  UserRole,
-	})
 
 	return rep
 }
 
-func (r *testRepo) ShutDown() {
-	log.Println("Close users db connections...")
-}
-
-func (r *testRepo) Find(id string) (*User, error) {
+func (r *testRepo) Find(id string) (*user.User, error) {
 	for _, u := range r.users {
 		if u.ID == id {
 			return u, nil
@@ -37,7 +29,7 @@ func (r *testRepo) Find(id string) (*User, error) {
 	return nil, nil
 }
 
-func (r *testRepo) FindByUsername(email string) (*User, error) {
+func (r *testRepo) FindByUsername(email string) (*user.User, error) {
 	for _, u := range r.users {
 		if u.Email == email {
 			return u, nil
@@ -46,16 +38,16 @@ func (r *testRepo) FindByUsername(email string) (*User, error) {
 	return nil, nil
 }
 
-func (r *testRepo) FindAll() ([]*User, error) {
+func (r *testRepo) FindAll() ([]*user.User, error) {
 	return r.users, nil
 }
 
-func (r *testRepo) Store(user *User) (*User, error) {
+func (r *testRepo) Store(user *user.User) (*user.User, error) {
 	r.users = append(r.users, user)
 	return user, nil
 }
 
-func (r *testRepo) Update(user *User) (*User, error) {
+func (r *testRepo) Update(user *user.User) (*user.User, error) {
 	for i, u := range r.users {
 		if u.ID == user.ID {
 			r.users[i] = user

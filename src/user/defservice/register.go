@@ -59,7 +59,7 @@ func (s *userService) EndSignUp(tokenID string, tokenValue string) (*user.User, 
 		return nil, "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
 	}
 
-	return dbUser, "", nil
+	return dbUser, sid, nil
 }
 
 func (s *userService) restoreSignUpUser(tokenID string) (*user.User, error) {

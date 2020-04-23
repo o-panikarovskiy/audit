@@ -16,7 +16,7 @@ func CreateRouter(cfg *config.AppConfig) http.Handler {
 	router := mux.NewRouter()
 
 	api := router.PathPrefix("/api").Subrouter()
-	api.HandleFunc("/health", health).Methods("GET")
+	api.HandleFunc("/health", Health).Methods("GET")
 	api.HandleFunc("/ws", sockets.HTTPUpgradeHandler).Methods("GET")
 
 	api.Use(middlewares.MdlwError)

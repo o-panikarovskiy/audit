@@ -21,10 +21,14 @@ func NewInstance(cfg *config.AppConfig) *Instance {
 
 // Run instanse
 func (inst *Instance) Run() {
-	go runHTTPServer(inst.httpServer)
+	if inst.httpServer != nil {
+		go runHTTPServer(inst.httpServer)
+	}
 }
 
 // Stop instanse
 func (inst *Instance) Stop() {
-	shutdownHTTPServer(inst.httpServer, inst.cfg)
+	if inst.httpServer != nil {
+		shutdownHTTPServer(inst.httpServer, inst.cfg)
+	}
 }

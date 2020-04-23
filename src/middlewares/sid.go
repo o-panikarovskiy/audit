@@ -11,7 +11,6 @@ import (
 )
 
 // MdlwSession check user session from sid cookie
-// and set user
 func MdlwSession(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		cfg := di.GetAppConfig()
@@ -32,6 +31,10 @@ func MdlwSession(next http.Handler) http.Handler {
 			res.SendStatusError(w, http.StatusUnauthorized, err, "SESSION_ERROR")
 			return
 		}
+
+		ctx := GetContext(r)
+		ctx = ctx.WithSessionID(sid)
+		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)
 	}

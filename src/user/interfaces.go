@@ -2,6 +2,25 @@ package user
 
 import "audit/src/sessions"
 
+// IReader interface
+type IReader interface {
+	Find(string) (*User, error)
+	FindByUsername(string) (*User, error)
+	FindAll() ([]*User, error)
+}
+
+// IWriter interface
+type IWriter interface {
+	Store(*User) (*User, error)
+	Update(*User) (*User, error)
+}
+
+//IRepository repository interface
+type IRepository interface {
+	IReader
+	IWriter
+}
+
 // IService user bussines logic interface
 type IService interface {
 	IReader
