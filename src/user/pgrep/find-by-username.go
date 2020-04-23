@@ -4,7 +4,7 @@ import (
 	"audit/src/user"
 )
 
-func (r *pgRepository) FindByEmail(email string) (*user.User, error) {
+func (r *pgRepository) FindByUsername(email string) (*user.User, error) {
 	sql := r.getSelectModelText() + ` WHERE "email" = $1 LIMIT 1;`
 
 	res, err := r.queryFullModel(sql, email)

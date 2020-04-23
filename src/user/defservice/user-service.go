@@ -7,17 +7,24 @@ import (
 )
 
 type userService struct {
-	repo     user.IRepository
-	sessions sessions.IStorage
-	cfg      *config.AppConfig
+	repo        user.IRepository
+	sessions    sessions.IStorage
+	confirmator user.IConfirmService
+	cfg         *config.AppConfig
 }
 
-//NewDefaultUserService create new repository
-func NewDefaultUserService(r user.IRepository, s sessions.IStorage, cfg *config.AppConfig) user.IService {
+// NewDefaultUserService create new repository
+func NewDefaultUserService(
+	rep user.IRepository,
+	ses sessions.IStorage,
+	cfrm user.IConfirmService,
+	cfg *config.AppConfig,
+) user.IService {
 	return &userService{
-		repo:     r,
-		sessions: s,
-		cfg:      cfg,
+		repo:        rep,
+		sessions:    ses,
+		confirmator: cfrm,
+		cfg:         cfg,
 	}
 }
 
@@ -25,8 +32,8 @@ func (s *userService) Find(id string) (*user.User, error) {
 	return s.repo.Find(id)
 }
 
-func (s *userService) FindByEmail(email string) (*user.User, error) {
-	return s.repo.FindByEmail(email)
+func (s *userService) FindByUsername(email string) (*user.User, error) {
+	return s.repo.FindByUsername(email)
 }
 
 func (s *userService) FindAll() ([]*user.User, error) {

@@ -17,23 +17,28 @@ type signUpUserData struct {
 	PasswordHash string
 }
 
-func (s *userService) SignUp(email string, password string) (string, error) {
+func (s *userService) SignUp(email string, password string) (string, string, error) {
 	email = strings.ToLower(email)
-	err := s.checkEmailNotExists(email)
+	err := s.checkUserNotExists(email)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	tokenID, err := s.storeSignUpData(email, password)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return tokenID, nil
+	err = s.confirmator.Send(&user.User{Email: email}, tokenID, "")
+	if err != nil {
+		return "", "", err
+	}
+
+	return tokenID, "", nil
 }
 
-func (s *userService) EndSignUp(tokenID string) (*user.User, string, error) {
-	usr, err := s.getSignUpUser(tokenID)
+func (s *userService) EndSignUp(tokenID string, tokenValue string) (*user.User, string, error) {
+	usr, err := s.restoreSignUpUser(tokenID)
 	if err != nil {
 		return nil, "", err
 	}
@@ -57,7 +62,7 @@ func (s *userService) EndSignUp(tokenID string) (*user.User, string, error) {
 	return dbUser, "", nil
 }
 
-func (s *userService) getSignUpUser(tokenID string) (*user.User, error) {
+func (s *userService) restoreSignUpUser(tokenID string) (*user.User, error) {
 	json, err := s.sessions.GetJSON(confirmEmailKey + tokenID)
 	if err != nil {
 		return nil, utils.NewAppError("APP_ERROR", err.Error())
@@ -104,8 +109,8 @@ func (s *userService) storeSignUpData(email string, password string) (string, er
 	return tokenID, nil
 }
 
-func (s *userService) checkEmailNotExists(email string) error {
-	exUser, err := s.FindByEmail(email)
+func (s *userService) checkUserNotExists(email string) error {
+	exUser, err := s.FindByUsername(email)
 
 	if err != nil {
 		return &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}

@@ -13,7 +13,7 @@ type EndSignUpResModel struct {
 
 // EndSignUp func
 func EndSignUp(tokenID string) (*EndSignUpResModel, error) {
-	user, sid, err := di.GetUserService().EndSignUp(tokenID)
+	user, sid, err := di.GetUserService().EndSignUp(tokenID, "")
 	if err != nil {
 		return nil, err
 	}

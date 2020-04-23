@@ -37,7 +37,7 @@ func (r *testRepo) Find(id string) (*User, error) {
 	return nil, nil
 }
 
-func (r *testRepo) FindByEmail(email string) (*User, error) {
+func (r *testRepo) FindByUsername(email string) (*User, error) {
 	for _, u := range r.users {
 		if u.Email == email {
 			return u, nil

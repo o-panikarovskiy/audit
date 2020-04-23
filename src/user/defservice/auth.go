@@ -11,7 +11,7 @@ const authUserKey = "AUTH:USER:"
 
 func (s *userService) Auth(email string, password string) (*user.User, string, error) {
 	email = strings.ToLower(email)
-	user, err := s.FindByEmail(email)
+	user, err := s.FindByUsername(email)
 
 	if err != nil {
 		return nil, "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}

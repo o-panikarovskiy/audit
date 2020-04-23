@@ -3,7 +3,7 @@ package user
 // IReader interface
 type IReader interface {
 	Find(string) (*User, error)
-	FindByEmail(string) (*User, error)
+	FindByUsername(string) (*User, error)
 	FindAll() ([]*User, error)
 }
 

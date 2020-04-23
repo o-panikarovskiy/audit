@@ -25,7 +25,7 @@ func SignUp(json *map[string]interface{}) (*SignUpResModel, error) {
 		return nil, err
 	}
 
-	tokenID, err := di.GetUserService().SignUp(model.Email, model.Password)
+	tokenID, _, err := di.GetUserService().SignUp(model.Email, model.Password)
 	if err != nil {
 		return nil, err
 	}

@@ -5,29 +5,33 @@ import (
 	"audit/src/di"
 	"audit/src/sessions/redisses"
 	"audit/src/user/defservice"
+	"audit/src/user/emailconfirm"
 	"audit/src/user/pgrep"
 )
 
 func createDevInstase(cfg *config.AppConfig) *Instance {
-	pool, err := createPgxPool(cfg)
+	pgPool, err := createPgxPool(cfg)
 	if err != nil {
 		panic(err)
 	}
 
-	rep, err := pgrep.NewRepository(pool)
+	pgRepository, err := pgrep.NewRepository(pgPool)
 	if err != nil {
 		panic(err)
 	}
 
-	ses, err := redisses.NewStorage((cfg))
+	redisStorage, err := redisses.NewStorage((cfg))
 	if err != nil {
 		panic(err)
 	}
+
+	emailConfirmator := emailconfirm.NewEmailConfirmService(cfg)
+	userService := defservice.NewDefaultUserService(pgRepository, redisStorage, emailConfirmator, cfg)
 
 	deps := &di.ServiceLocator{}
 	deps.Register(cfg)
-	deps.Register(ses)
-	deps.Register(defservice.NewDefaultUserService(rep, ses, cfg))
+	deps.Register(redisStorage)
+	deps.Register(userService)
 
 	di.Set(deps)
 
