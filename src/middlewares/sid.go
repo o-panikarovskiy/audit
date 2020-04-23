@@ -4,7 +4,6 @@ import (
 	"audit/src/di"
 	"audit/src/utils/res"
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/securecookie"
@@ -48,10 +47,14 @@ func (ctx Context) WithSessionID(data string) Context {
 
 // GetSessionID get sid from context
 func (ctx Context) GetSessionID() string {
-	val, ok := ctx.Value(sessionKey).(string)
+	raw := ctx.Value(sessionKey)
+	if raw == nil {
+		return ""
+	}
 
+	val, ok := raw.(string)
 	if !ok {
-		panic(fmt.Errorf("Failed to get value from context %v by key %v", val, sessionKey))
+		return ""
 	}
 
 	return val

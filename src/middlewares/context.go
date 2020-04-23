@@ -42,7 +42,7 @@ func GetContext(r *http.Request) Context {
 	ctx, ok := r.Context().(Context)
 	if !ok {
 		log.Panic("Failed to get custom Context from request")
-		return ctx
 	}
+
 	return ctx
 }

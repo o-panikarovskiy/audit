@@ -4,7 +4,6 @@ import (
 	"audit/src/utils"
 	"audit/src/utils/res"
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -35,13 +34,22 @@ func (ctx Context) WithJSON(data *map[string]interface{}) Context {
 
 // JSON get json data from context
 func (ctx Context) JSON() *map[string]interface{} {
-	val, ok := ctx.Value(jsonKey).(*map[string]interface{})
+	raw := ctx.Value(sessionKey)
+	if raw == nil {
+		return emptyJSON()
+	}
 
+	val, ok := raw.(*map[string]interface{})
 	if !ok {
-		panic(fmt.Errorf("Failed to get value from context %v by key %v", val, jsonKey))
+		return emptyJSON()
 	}
 
 	return val
+}
+
+func emptyJSON() *map[string]interface{} {
+	json := make(map[string]interface{})
+	return &json
 }
 
 func decodeJSON(r *http.Request) (*map[string]interface{}, error) {

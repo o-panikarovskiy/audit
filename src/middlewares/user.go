@@ -5,7 +5,6 @@ import (
 	"audit/src/user"
 	"audit/src/utils/res"
 	"context"
-	"fmt"
 	"net/http"
 )
 
@@ -37,10 +36,14 @@ func (ctx Context) WithSessionUser(su *user.User) Context {
 
 // GetSessionUser get session user from context
 func (ctx Context) GetSessionUser() *user.User {
-	val, ok := ctx.Value(sessionUserKey).(*user.User)
+	raw := ctx.Value(sessionKey)
+	if raw == nil {
+		return nil
+	}
 
+	val, ok := raw.(*user.User)
 	if !ok {
-		panic(fmt.Errorf("Failed to get value from context %v by key %v", val, sessionUserKey))
+		return nil
 	}
 
 	return val
