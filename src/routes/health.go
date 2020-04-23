@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func Health(w http.ResponseWriter, r *http.Request) {
+func health(w http.ResponseWriter, r *http.Request) {
 	res.SendJSON(w, http.StatusOK, map[string]interface{}{"ok": true})
 }
