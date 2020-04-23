@@ -22,8 +22,7 @@ func (s *userService) CheckAuthSession(sid string) (*user.User, error) {
 		return nil, &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
 	}
 
-	// update session
-	s.saveAuthSession(sid, dbUser)
+	s.saveAuthSession(sid, dbUser) // update session age
 	return dbUser, err
 }
 

@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	cfg := &config.AppConfig{SessionAgeMin: 60}
+	cfg := &config.AppConfig{SessionAgeSec: 60 * 60}
 	rep := testrep.NewTestRepository()
 	ms := mem.NewStorage()
 	ec := emailconfirm.NewEmailConfirmService(cfg)

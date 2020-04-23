@@ -4,7 +4,7 @@
     "gracefulTimeout": 15,
     "staticDir": "./client/dist",
     "logRequestAfterMs": 100,
-    "sessionAgeMin": 10080,
+    "sessionAgeSec": 604800,
     "cookie": {
         "hash": "32 length sting",
         "block": "32 length sting"

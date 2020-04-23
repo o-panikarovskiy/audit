@@ -37,7 +37,7 @@ func (s *userService) Auth(email string, password string) (*user.User, string, e
 }
 
 func (s *userService) saveAuthSession(sid string, user *user.User) error {
-	expiration := s.cfg.SessionAgeMin * 60
+	expiration := s.cfg.SessionAgeSec
 
 	err := s.sessions.SetJSON(authUserKey+sid, user, expiration)
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-var cfg = &config.AppConfig{SessionAgeMin: 60}
+var cfg = &config.AppConfig{SessionAgeSec: 60 * 60}
 var rep = testrep.NewTestRepository()
 var ms = mem.NewStorage()
 var ec = emailconfirm.NewEmailConfirmService(cfg)

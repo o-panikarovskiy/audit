@@ -36,7 +36,7 @@ func (ctx Context) WithSessionUser(su *user.User) Context {
 
 // GetSessionUser get session user from context
 func (ctx Context) GetSessionUser() *user.User {
-	raw := ctx.Value(sessionKey)
+	raw := ctx.Value(sessionUserKey)
 	if raw == nil {
 		return nil
 	}
