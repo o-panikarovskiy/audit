@@ -8,8 +8,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-const confirmEmailKey = "AUTH:REG:"
-
 type signUpUserData struct {
 	Email        string
 	Role         int
@@ -19,16 +17,17 @@ type signUpUserData struct {
 
 func (s *userService) SignUp(email string, password string) (string, string, error) {
 	if email == "" || password == "" {
-		return "", "", &utils.AppError{
-			Code:    "INVALID_REQUEST_MODEL",
-			Message: "Email or password is incorrect",
-		}
+		return "", "", invalidReqModelErr
 	}
 
 	email = strings.ToLower(email)
-	err := s.checkUserNotExists(email)
+	exUser, err := s.FindByUsername(email)
 	if err != nil {
 		return "", "", err
+	}
+
+	if exUser != nil {
+		return "", "", userExistsError
 	}
 
 	tokenID, err := s.storeSignUpData(email, password)
@@ -45,6 +44,10 @@ func (s *userService) SignUp(email string, password string) (string, string, err
 }
 
 func (s *userService) EndSignUp(tokenID string, tokenValue string) (*user.User, string, error) {
+	if tokenID == "" {
+		return nil, "", badTokenError
+	}
+
 	usr, err := s.restoreSignUpData(tokenID)
 	if err != nil {
 		return nil, "", err
@@ -52,18 +55,18 @@ func (s *userService) EndSignUp(tokenID string, tokenValue string) (*user.User, 
 
 	dbUser, err := s.Store(usr)
 	if err != nil {
-		return nil, "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
+		return nil, "", err
 	}
 
 	_, err = s.sessions.Delete(confirmEmailKey + tokenID)
 	if err != nil {
-		return nil, "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
+		return nil, "", err
 	}
 
 	sid := utils.RandomString(64)
 	err = s.saveAuthSession(sid, dbUser)
 	if err != nil {
-		return nil, "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
+		return nil, "", err
 	}
 
 	err = s.destroySignUpData(tokenID)
@@ -72,41 +75,6 @@ func (s *userService) EndSignUp(tokenID string, tokenValue string) (*user.User, 
 	}
 
 	return dbUser, sid, nil
-}
-
-func (s *userService) restoreSignUpData(tokenID string) (*user.User, error) {
-	json, err := s.sessions.GetJSON(confirmEmailKey + tokenID)
-	if err != nil {
-		return nil, &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
-	}
-
-	if json == nil {
-		return nil, &utils.AppError{Code: "BAD_TOKEN_ID", Message: "Token not found"}
-	}
-
-	var data signUpUserData
-	err = mapstructure.Decode(json, &data)
-	if err != nil {
-		return nil, &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
-	}
-
-	u := &user.User{
-		Email:        data.Email,
-		Status:       "confirmed",
-		PasswordHash: data.PasswordHash,
-		PasswordSalt: data.PasswordSalt,
-		Role:         data.Role,
-	}
-
-	return u, nil
-}
-
-func (s *userService) destroySignUpData(tokenID string) error {
-	_, err := s.sessions.Delete(confirmEmailKey + tokenID)
-	if err != nil {
-		return &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
-	}
-	return nil
 }
 
 func (s *userService) storeSignUpData(email string, password string) (string, error) {
@@ -123,22 +91,43 @@ func (s *userService) storeSignUpData(email string, password string) (string, er
 
 	err := s.sessions.SetJSON(confirmEmailKey+tokenID, data, expiration)
 	if err != nil {
-		return "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
+		return "", err
 	}
 
 	return tokenID, nil
 }
 
-func (s *userService) checkUserNotExists(email string) error {
-	exUser, err := s.FindByUsername(email)
-
+func (s *userService) restoreSignUpData(tokenID string) (*user.User, error) {
+	json, err := s.sessions.GetJSON(confirmEmailKey + tokenID)
 	if err != nil {
-		return &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
+		return nil, err
 	}
 
-	if exUser != nil {
-		return &utils.AppError{Code: "USER_EXISTS", Message: "User already exists"}
+	if json == nil {
+		return nil, badTokenError
 	}
 
+	var data signUpUserData
+	err = mapstructure.Decode(json, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	u := &user.User{
+		Email:        data.Email,
+		Status:       "confirmed",
+		PasswordHash: data.PasswordHash,
+		PasswordSalt: data.PasswordSalt,
+		Role:         data.Role,
+	}
+
+	return u, nil
+}
+
+func (s *userService) destroySignUpData(tokenID string) error {
+	_, err := s.sessions.Delete(confirmEmailKey + tokenID)
+	if err != nil {
+		return err
+	}
 	return nil
 }

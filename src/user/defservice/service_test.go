@@ -74,8 +74,8 @@ func TestAuth(t *testing.T) {
 			t.Errorf(`Auth("", "") hasn't error; want error`)
 		} else if e, ok := err.(*utils.AppError); !ok {
 			t.Errorf(`Auth("", "") hasn wrong error %w; want AppError`, err)
-		} else if e.Code != "AUTH_ERROR" {
-			t.Errorf(`Auth("", "") hasn wrong error code %s; want "AUTH_ERROR"`, e.Code)
+		} else if e.Code != "INVALID_REQUEST_MODEL" {
+			t.Errorf(`Auth("", "") hasn wrong error code %s; want "INVALID_REQUEST_MODEL"`, e.Code)
 		}
 	})
 

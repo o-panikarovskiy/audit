@@ -16,5 +16,5 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	res.SendNoContent(w)
 }

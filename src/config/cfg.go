@@ -8,29 +8,39 @@ import (
 	"time"
 )
 
+// AppConfigCookie struct
+type AppConfigCookie struct {
+	Hash  string `json:"hash"`
+	Block string `json:"block"`
+	Name  string `json:"sid"`
+}
+
+// AppConfigRedis struct
+type AppConfigRedis struct {
+	ConnectionString string `json:"connectionString"`
+}
+
+// AppConfigPG struct
+type AppConfigPG struct {
+	ConnectionString     string `json:"connectionString"`
+	PoolMinConns         int    `json:"poolMinConns"`
+	PoolMaxConns         int    `json:"poolMaxConns"`
+	MaxConnLifetimeMin   int    `json:"maxConnLifetimeMin"`
+	MaxConnIdleTimeMin   int    `json:"maxConnIdleTimeMin"`
+	HealthCheckPeriodMin int    `json:"healthCheckPeriodMin"`
+}
+
 // AppConfig main app config
 type AppConfig struct {
-	Port              int           `json:"port"`
-	Env               string        `json:"env"`
-	GracefulTimeout   time.Duration `json:"gracefulTimeout"`
-	StaticDir         string        `json:"staticDir"`
-	LogRequestAfterMs time.Duration `json:"logRequestAfterMs"`
-	SessionAgeSec     int           `json:"sessionAgeSec"`
-	Cookie            struct {
-		Hash  string `json:"hash"`
-		Block string `json:"block"`
-	} `json:"cookie"`
-	Redis struct {
-		ConnectionString string `json:"connectionString"`
-	} `json:"redis"`
-	PG struct {
-		ConnectionString     string `json:"connectionString"`
-		PoolMinConns         int    `json:"poolMinConns"`
-		PoolMaxConns         int    `json:"poolMaxConns"`
-		MaxConnLifetimeMin   int    `json:"maxConnLifetimeMin"`
-		MaxConnIdleTimeMin   int    `json:"maxConnIdleTimeMin"`
-		HealthCheckPeriodMin int    `json:"healthCheckPeriodMin"`
-	} `json:"pg"`
+	Port              int             `json:"port"`
+	Env               string          `json:"env"`
+	GracefulTimeout   time.Duration   `json:"gracefulTimeout"`
+	StaticDir         string          `json:"staticDir"`
+	LogRequestAfterMs time.Duration   `json:"logRequestAfterMs"`
+	SessionAgeSec     int             `json:"sessionAgeSec"`
+	Cookie            AppConfigCookie `json:"cookie"`
+	Redis             AppConfigRedis  `json:"redis"`
+	PG                AppConfigPG     `json:"pg"`
 }
 
 const (

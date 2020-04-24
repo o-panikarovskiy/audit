@@ -6,31 +6,31 @@ import (
 	"strings"
 )
 
-const authSidKey = "AUTH:SID:"
-const authUserKey = "AUTH:USER:"
-
 func (s *userService) Auth(email string, password string) (*user.User, string, error) {
+	if email == "" || password == "" {
+		return nil, "", invalidReqModelErr
+	}
+
 	email = strings.ToLower(email)
 	user, err := s.FindByUsername(email)
-
 	if err != nil {
-		return nil, "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
+		return nil, "", err
 	}
 
 	if user == nil ||
 		user.PasswordHash != utils.SHA512(password, user.PasswordSalt) {
-		return nil, "", &utils.AppError{Code: "AUTH_ERROR", Message: "Email or password is incorrect"}
+		return nil, "", authAppErr
 	}
 
 	err = s.destroyAuthSession(user.ID)
 	if err != nil {
-		return nil, "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
+		return nil, "", err
 	}
 
 	sid := utils.RandomString(64)
 	err = s.saveAuthSession(sid, user)
 	if err != nil {
-		return nil, "", &utils.AppError{Code: "APP_ERROR", Message: err.Error(), Err: err}
+		return nil, "", err
 	}
 
 	return user, sid, nil

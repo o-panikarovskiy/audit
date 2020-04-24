@@ -35,6 +35,7 @@ func (ctx Context) WithJSON(data *map[string]interface{}) Context {
 // JSON get json data from context
 func (ctx Context) JSON() *map[string]interface{} {
 	raw := ctx.Value(jsonKey)
+
 	if raw == nil {
 		return emptyJSON()
 	}

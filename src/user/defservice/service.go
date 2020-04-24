@@ -4,7 +4,32 @@ import (
 	"audit/src/config"
 	"audit/src/sessions"
 	"audit/src/user"
+	"audit/src/utils"
 )
+
+const authSidKey = "AUTH:SID:"
+const authUserKey = "AUTH:USER:"
+const confirmEmailKey = "AUTH:EMAIL:"
+
+var badTokenError = &utils.AppError{
+	Code:    "BAD_TOKEN",
+	Message: "Token not found",
+}
+
+var userExistsError = &utils.AppError{
+	Code:    "USER_EXISTS",
+	Message: "User already exists",
+}
+
+var invalidReqModelErr = &utils.AppError{
+	Code:    "INVALID_REQUEST_MODEL",
+	Message: "Email or password is incorrect",
+}
+
+var authAppErr = &utils.AppError{
+	Code:    "AUTH_ERROR",
+	Message: "Email or password is incorrect",
+}
 
 type userService struct {
 	repo        user.IRepository

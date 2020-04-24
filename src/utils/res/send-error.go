@@ -24,7 +24,7 @@ func SendStatusError(res http.ResponseWriter, status int, err error, msg ...stri
 		appErr.Code = code
 	}
 
-	if cfg.IsDev() {
+	if cfg.IsDev() || cfg.IsTest() {
 		appErr.Stack = utils.GetErrorStack(err, 2)
 	}
 
