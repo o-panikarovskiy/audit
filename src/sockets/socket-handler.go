@@ -2,6 +2,7 @@ package sockets
 
 import (
 	"audit/src/di"
+	"audit/src/middlewares"
 	"audit/src/utils/res"
 	"net/http"
 
@@ -16,21 +17,22 @@ var upgrader = websocket.Upgrader{
 
 // HTTPUpgradeHandler connect socket handler
 func HTTPUpgradeHandler(w http.ResponseWriter, r *http.Request) {
-	sid := readCookieSid(r)
-	srv := di.GetUserService()
-	srv.CheckAuthSession(sid)
+	u := middlewares.GetContext(r).GetSessionUser()
+	if u == nil {
+		res.WriteJSONHeader(w, http.StatusUnauthorized)
+		return
+	}
 
 	conn, err := upgrader.Upgrade(w, r, nil)
-
 	if err != nil {
 		res.SendStatusError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	startListen(createClient(conn))
+	startListen(createClient(conn, u.ID))
 }
 
-func readCookieSid(r *http.Request) string {
+func readAuthCookie(r *http.Request) string {
 	cfg := di.GetAppConfig()
 
 	name := cfg.Cookie.Name

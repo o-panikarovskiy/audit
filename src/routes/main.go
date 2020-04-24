@@ -15,13 +15,15 @@ import (
 func CreateRouter(cfg *config.AppConfig) http.Handler {
 	router := mux.NewRouter()
 
-	api := router.PathPrefix("/api").Subrouter()
-	api.HandleFunc("/health", health).Methods("GET")
-	api.HandleFunc("/ws", sockets.HTTPUpgradeHandler).Methods("GET")
+	socketHandler := middlewares.MdlwSessionUser(middlewares.MdlwSession(http.HandlerFunc(sockets.HTTPUpgradeHandler)))
 
+	api := router.PathPrefix("/api").Subrouter()
 	api.Use(middlewares.MdlwError)
 	api.Use(middlewares.MdlwLog)
 	api.Use(middlewares.MdlwTypedContext)
+
+	api.Handle("/ws", socketHandler).Methods("GET")
+	api.HandleFunc("/health", health).Methods("GET")
 
 	auth.GetRoutes(api)
 

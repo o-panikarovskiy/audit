@@ -1,7 +1,6 @@
 package sockets
 
 import (
-	"audit/src/utils"
 	"fmt"
 	"log"
 	"sync"
@@ -50,10 +49,10 @@ func FilterBroadcast(eventName string, data interface{}, predicate func(clientID
 	})
 }
 
-func createClient(conn *websocket.Conn) ISocketClient {
+func createClient(conn *websocket.Conn, userID string) ISocketClient {
 	client := &socketClient{
 		connection: conn,
-		ID:         utils.CreateGUID(),
+		ID:         userID,
 	}
 
 	conn.SetCloseHandler(func(code int, text string) error {
