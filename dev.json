@@ -1,10 +1,14 @@
 {
     "port": 8080,
     "env": "dev",
-    "gracefulTimeout": 15,
+    "gracefulTimeoutSec": 15,
     "staticDir": "./client/dist",
     "logRequestAfterMs": 100,
     "sessionAgeSec": 604800,
+    "rateLimit": {
+        "maxRequests": 10,
+        "intervalMs": 1
+    },
     "cookie": {
         "hash": "32 length sting",
         "block": "32 length sting"

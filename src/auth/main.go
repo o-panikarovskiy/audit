@@ -14,10 +14,10 @@ import (
 func GetRoutes(router *mux.Router) {
 	sub := router.PathPrefix("/auth").Subrouter()
 
-	singUp := middlewares.MdlwJSON(http.HandlerFunc(handlers.SignUp))
-	signIn := middlewares.MdlwJSON(http.HandlerFunc(handlers.SignIn))
-	checkSession := middlewares.MdlwSession(http.HandlerFunc(handlers.CheckSession))
-	confirm := http.HandlerFunc(handlers.EndRegistration)
+	singUp := middlewares.MdlwRateLimit(middlewares.MdlwJSON(http.HandlerFunc(handlers.SignUp)))
+	signIn := middlewares.MdlwRateLimit(middlewares.MdlwJSON(http.HandlerFunc(handlers.SignIn)))
+	checkSession := middlewares.MdlwRateLimit(middlewares.MdlwSession(http.HandlerFunc(handlers.CheckSession)))
+	confirm := middlewares.MdlwRateLimit(http.HandlerFunc(handlers.EndRegistration))
 
 	sub.Handle("/signup", singUp).Methods("POST")
 	sub.Handle("/signin", signIn).Methods("POST")

@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"time"
 )
 
 // AppConfigCookie struct
@@ -30,17 +29,24 @@ type AppConfigPG struct {
 	HealthCheckPeriodMin int    `json:"healthCheckPeriodMin"`
 }
 
+// AppConfigRateLimit struct
+type AppConfigRateLimit struct {
+	IntervalMs  int `json:"intervalMs"`
+	MaxRequests int `json:"maxRequests"`
+}
+
 // AppConfig main app config
 type AppConfig struct {
-	Port              int             `json:"port"`
-	Env               string          `json:"env"`
-	GracefulTimeout   time.Duration   `json:"gracefulTimeout"`
-	StaticDir         string          `json:"staticDir"`
-	LogRequestAfterMs time.Duration   `json:"logRequestAfterMs"`
-	SessionAgeSec     int             `json:"sessionAgeSec"`
-	Cookie            AppConfigCookie `json:"cookie"`
-	Redis             AppConfigRedis  `json:"redis"`
-	PG                AppConfigPG     `json:"pg"`
+	Port               int                `json:"port"`
+	Env                string             `json:"env"`
+	GracefulTimeoutSec int                `json:"gracefulTimeoutSec"`
+	StaticDir          string             `json:"staticDir"`
+	LogRequestAfterMs  int                `json:"logRequestAfterMs"`
+	SessionAgeSec      int                `json:"sessionAgeSec"`
+	Cookie             AppConfigCookie    `json:"cookie"`
+	RateLimit          AppConfigRateLimit `json:"rateLimit"`
+	Redis              AppConfigRedis     `json:"redis"`
+	PG                 AppConfigPG        `json:"pg"`
 }
 
 const (

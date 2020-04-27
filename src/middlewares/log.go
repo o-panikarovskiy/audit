@@ -14,7 +14,7 @@ func MdlwLog(next http.Handler) http.Handler {
 		start := time.Now()
 
 		defer func() {
-			maxElapsed := cfg.LogRequestAfterMs * time.Millisecond
+			maxElapsed := time.Duration(cfg.LogRequestAfterMs) * time.Millisecond
 
 			if d := time.Since(start); d > maxElapsed {
 				log.Printf("%v %s %s", d, req.Method, req.URL)
