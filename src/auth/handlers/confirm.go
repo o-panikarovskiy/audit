@@ -20,5 +20,5 @@ func EndRegistration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	setAuthCookie(w, model.SID)
-	res.SendJSON(w, http.StatusOK, model.User)
+	res.SendJSON(w, http.StatusOK, *model.User)
 }

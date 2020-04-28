@@ -18,5 +18,5 @@ func CheckSession(w http.ResponseWriter, r *http.Request) {
 	}
 
 	setAuthCookie(w, sid) // update cookie age
-	res.SendJSON(w, http.StatusOK, user)
+	res.SendJSON(w, http.StatusOK, *user)
 }

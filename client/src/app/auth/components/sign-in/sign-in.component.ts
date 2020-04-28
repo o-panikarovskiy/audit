@@ -55,7 +55,6 @@ export class SignInComponent implements OnInit, OnDestroy {
     ).pipe(
       takeUntil(this.destroy$)
     ).subscribe(() => {
-      this.reset();
       this.router.navigate(['/home']);
     }, (err: HttpErrorResponse) => {
       this.reset();

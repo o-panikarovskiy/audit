@@ -1,7 +1,5 @@
 package user
 
-import "time"
-
 const (
 	// AnonymousRole role 1
 	AnonymousRole = 1
@@ -13,12 +11,12 @@ const (
 
 // User data
 type User struct {
-	ID           string    `json:"id"`
-	Email        string    `json:"email"`
-	Name         string    `json:"name"`
-	Created      time.Time `json:"created"`
-	Status       string    `json:"-"`
-	PasswordHash string    `json:"-"`
-	PasswordSalt string    `json:"-"`
-	Role         int       `json:"role"`
+	ID           string  `json:"id"`
+	Email        string  `json:"email"`
+	Name         string  `json:"name"`
+	Created      float64 `json:"created"`
+	Status       string  `json:"-"`
+	PasswordHash string  `json:"-"`
+	PasswordSalt string  `json:"-"`
+	Role         int     `json:"role"`
 }

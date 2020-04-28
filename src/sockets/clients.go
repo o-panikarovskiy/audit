@@ -50,6 +50,27 @@ func FilterBroadcast(eventName string, data interface{}, predicate func(clientID
 	})
 }
 
+// FindClient broadcast event to clients by predicate
+func FindClient(predicate func(clientID string, userID string) bool) ISocketClient {
+	var res ISocketClient
+
+	connections.Range(func(key interface{}, val interface{}) bool {
+		client := (val.(ISocketClient))
+		if predicate(client.GetID(), client.GetUserID()) {
+			res = client
+			return false
+		}
+		return true
+	})
+
+	return res
+}
+
+// RemoveClient func
+func RemoveClient(clientID string) {
+	connections.Delete(clientID)
+}
+
 func createClient(conn *websocket.Conn, userID string) ISocketClient {
 	client := &socketClient{
 		connection: conn,
@@ -59,7 +80,7 @@ func createClient(conn *websocket.Conn, userID string) ISocketClient {
 
 	conn.SetCloseHandler(func(code int, text string) error {
 		log.Println("Client disconnected", client.GetID())
-		removeClient(client.GetID())
+		RemoveClient(client.GetID())
 		return nil
 	})
 
@@ -69,8 +90,4 @@ func createClient(conn *websocket.Conn, userID string) ISocketClient {
 	client.WriteJSON("socket:client:id", client.GetID())
 
 	return client
-}
-
-func removeClient(clientID string) {
-	connections.Delete(clientID)
 }

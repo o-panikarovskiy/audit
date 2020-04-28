@@ -3,7 +3,7 @@ package pgrep
 func (r *pgRepository) getSelectModelText() string {
 	return `SELECT "id", 
 								 "name", 
-								 "created",
+								 (extract(epoch from "created")*1000) AS "created",
 								 "email", 
 								 "status", 								
 								 "passwordHash",
