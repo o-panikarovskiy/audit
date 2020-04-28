@@ -37,4 +37,24 @@ export class CoreStoreService {
       })
     );
   }
+
+  public signUp(email: string, password: string) {
+    return this.authService.singUp(email, password);
+  }
+
+  public signUpConfirm(token: string) {
+    return this.authService.signUpConfirm(token).pipe(
+      tap((user) => {
+        this.store.dispatch(coreActions.signIn({ user }));
+      })
+    );
+  }
+
+  public singOut() {
+    return this.authService.singOut().pipe(
+      tap(() => {
+        this.store.dispatch(coreActions.signOut(void 0));
+      })
+    );
+  }
 }

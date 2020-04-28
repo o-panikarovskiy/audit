@@ -1,1 +1,10 @@
-<p>home works!</p>
+<div class="home">
+  <div class="content">
+    <div class="full-width">
+      {{store.user$ | async | json}}
+    </div>
+    <div>
+      <a href="" (click)="singOut($event)">Sing Out</a>
+    </div>
+  </div>
+</div>

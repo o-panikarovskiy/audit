@@ -26,6 +26,7 @@ type IService interface {
 	IReader
 	IWriter
 	SignUp(username string, password string) (string, string, error)
+	SignOut(user *User) error
 	EndSignUp(confirmID string, confirmValue string) (*User, string, error)
 	Auth(email string, password string) (*User, string, error)
 	RestoreSessionUser(sid string) (*User, error)

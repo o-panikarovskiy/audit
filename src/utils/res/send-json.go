@@ -8,7 +8,10 @@ import (
 // SendJSON send json to http response
 func SendJSON(w http.ResponseWriter, status int, data interface{}) error {
 	WriteJSONHeader(w, status)
-	return json.NewEncoder(w).Encode(data)
+	if data != nil {
+		return json.NewEncoder(w).Encode(data)
+	}
+	return nil
 }
 
 // SendNoContent send 204 wuth application/json header

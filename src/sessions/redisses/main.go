@@ -101,7 +101,7 @@ func (r *redisStorage) Set(key string, value string, expiration int) error {
 
 // Delete returns false and empty error if valuse does not exist.
 func (r *redisStorage) Delete(key string) (bool, error) {
-	_, err := r.client.Del(key).Result()
+	err := r.client.Del(key).Err()
 
 	if err == redis.Nil {
 		return false, nil

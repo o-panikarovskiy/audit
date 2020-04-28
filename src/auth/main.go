@@ -17,10 +17,12 @@ func GetRoutes(router *mux.Router) {
 	singUp := middlewares.MdlwRateLimit(middlewares.MdlwJSON(http.HandlerFunc(handlers.SignUp)))
 	signIn := middlewares.MdlwRateLimit(middlewares.MdlwJSON(http.HandlerFunc(handlers.SignIn)))
 	checkSession := middlewares.MdlwRateLimit(middlewares.MdlwSession(http.HandlerFunc(handlers.CheckSession)))
+	signOut := middlewares.MdlwSession(middlewares.MdlwSessionUser(http.HandlerFunc(handlers.SignOut)))
 	confirm := middlewares.MdlwRateLimit(http.HandlerFunc(handlers.EndRegistration))
 
 	sub.Handle("/signup", singUp).Methods("POST")
 	sub.Handle("/signin", signIn).Methods("POST")
+	sub.Handle("/signout", signOut).Methods("POST")
 	sub.Handle("/check", checkSession).Methods("GET")
 	sub.Handle("/confirm/{token}", confirm).Methods("GET")
 }

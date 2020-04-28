@@ -60,9 +60,14 @@ func (s *userService) destroyAuthSession(userID string) error {
 	}
 
 	if sid != "" {
-		_, err = s.sessions.Delete(sid)
+		_, err = s.sessions.Delete(authUserKey + sid)
 	}
 
+	if err != nil {
+		return err
+	}
+
+	_, err = s.sessions.Delete(authSidKey + userID)
 	if err != nil {
 		return err
 	}

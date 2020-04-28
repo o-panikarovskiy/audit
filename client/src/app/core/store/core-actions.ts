@@ -16,3 +16,8 @@ export const signIn = createAction(
   props<{ user: IUser }>()
 );
 
+export const signOut = createAction(
+  '[CORE] Sign Out',
+  props()
+);
+

@@ -1,32 +1,31 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { getPasswordValidator } from 'src/app/auth/components/sign-up/verify-password';
 import { CoreStoreService } from 'src/app/core/services/core.store.service';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './sign-in.component.html',
-  styleUrls: ['./sign-in.component.scss']
+  templateUrl: './sign-up.component.html',
+  styleUrls: ['./sign-up.component.scss']
 })
-export class SignInComponent implements OnInit, OnDestroy {
+export class SignUpComponent implements OnInit, OnDestroy {
   public readonly form = new FormGroup({
-    username: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required)
-  });
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+    passwordVerify: new FormControl('', [Validators.required, Validators.minLength(8)]),
+  }, { validators: getPasswordValidator('password', 'passwordVerify') });
 
   public isSending = false;
+  public isSuccess = false;
   public isSubmitted = false;
   public serverError = '';
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private router: Router,
-    private store: CoreStoreService
-  ) { }
+  constructor(private store: CoreStoreService) { }
 
   public ngOnInit(): void {
     this.form.valueChanges.pipe(
@@ -49,14 +48,14 @@ export class SignInComponent implements OnInit, OnDestroy {
     this.serverError = '';
     this.isSending = true;
 
-    this.store.signIn(
-      this.form.controls.username.value,
+    this.store.signUp(
+      this.form.controls.email.value,
       this.form.controls.password.value
     ).pipe(
       takeUntil(this.destroy$)
     ).subscribe(() => {
       this.reset();
-      this.router.navigate(['/home']);
+      this.isSuccess = true;
     }, (err: HttpErrorResponse) => {
       this.reset();
       this.serverError = err?.error?.message;

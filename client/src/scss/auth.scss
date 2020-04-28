@@ -1,4 +1,4 @@
-.home {
+.auth {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -10,6 +10,16 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+
+    .auth-title {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .submit {
+    margin-top: 20px;
   }
 
   .full-width {

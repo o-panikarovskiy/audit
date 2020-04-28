@@ -11,7 +11,7 @@ export const initialState: CoreState = {
 const coreReducer = createReducer(
   initialState,
 
-  on(actions.initStore, (state, { user }) => {
+  on(actions.initStore, actions.signIn, (state, { user }) => {
     return {
       ...state,
       user,
