@@ -1,6 +1,7 @@
 package sockets
 
 import (
+	"audit/src/utils"
 	"fmt"
 	"log"
 	"sync"
@@ -34,7 +35,7 @@ func Broadcast(eventName string, data interface{}) {
 }
 
 // FilterBroadcast broadcast event to clients by predicate
-func FilterBroadcast(eventName string, data interface{}, predicate func(clientID string) bool) {
+func FilterBroadcast(eventName string, data interface{}, predicate func(clientID string, userID string) bool) {
 	msg := &SocketMessage{
 		Data:      data,
 		EventName: eventName,
@@ -42,7 +43,7 @@ func FilterBroadcast(eventName string, data interface{}, predicate func(clientID
 
 	connections.Range(func(key interface{}, val interface{}) bool {
 		client := (val.(ISocketClient))
-		if predicate(client.GetID()) {
+		if predicate(client.GetID(), client.GetUserID()) {
 			client.SendMessage(msg)
 		}
 		return true
@@ -52,7 +53,8 @@ func FilterBroadcast(eventName string, data interface{}, predicate func(clientID
 func createClient(conn *websocket.Conn, userID string) ISocketClient {
 	client := &socketClient{
 		connection: conn,
-		ID:         userID,
+		ID:         utils.CreateGUID(),
+		UserID:     userID,
 	}
 
 	conn.SetCloseHandler(func(code int, text string) error {

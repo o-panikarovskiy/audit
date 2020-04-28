@@ -11,7 +11,7 @@ import (
 type AppConfigCookie struct {
 	Hash  string `json:"hash"`
 	Block string `json:"block"`
-	Name  string `json:"sid"`
+	Name  string `json:"name"`
 }
 
 // AppConfigRedis struct

@@ -9,12 +9,18 @@ import (
 
 type socketClient struct {
 	ID         string
+	UserID     string
 	connection *websocket.Conn
 }
 
 // Close send json data to client
 func (client *socketClient) GetID() string {
 	return client.ID
+}
+
+// Close send json data to client
+func (client *socketClient) GetUserID() string {
+	return client.UserID
 }
 
 // Close send json data to client

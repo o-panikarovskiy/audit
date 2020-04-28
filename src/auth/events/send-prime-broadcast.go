@@ -11,7 +11,7 @@ func SendPrimeBroadcast(client sockets.ISocketClient, msg *sockets.SocketMessage
 	if !msg.ExcludeMe {
 		sockets.Broadcast(msg.EventName, prime)
 	} else {
-		predicate := func(clientID string) bool { return clientID != client.GetID() }
+		predicate := func(clientID string, userID string) bool { return clientID != client.GetID() }
 		sockets.FilterBroadcast(msg.EventName, prime, predicate)
 	}
 }

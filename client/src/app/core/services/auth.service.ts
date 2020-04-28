@@ -15,6 +15,10 @@ export class AuthService {
     );
   }
 
+  public singIn(username: string, password: string): Observable<IUser> {
+    return this.be.post('auth/signin', { username, password });
+  }
+
   public authorize(accessLevel: AccessLevel, userRole: UserRole): boolean {
     // tslint:disable-next-line:no-bitwise
     return (accessLevel & userRole) > 0;

@@ -10,6 +10,7 @@
         "intervalMs": 1
     },
     "cookie": {
+        "name": "sid",
         "hash": "32 length sting",
         "block": "32 length sting"
     },

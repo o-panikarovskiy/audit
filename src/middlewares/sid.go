@@ -18,14 +18,14 @@ func MdlwSession(next http.Handler) http.Handler {
 		blockKey := []byte(cfg.Cookie.Block)
 		s := securecookie.New(hashKey, blockKey)
 
-		cookie, err := r.Cookie("sid")
+		cookie, err := r.Cookie(cfg.Cookie.Name)
 		if err != nil {
 			res.SendStatusError(w, http.StatusUnauthorized, err, "SESSION_ERROR")
 			return
 		}
 
 		sid := ""
-		err = s.Decode("sid", cookie.Value, &sid)
+		err = s.Decode(cfg.Cookie.Name, cookie.Value, &sid)
 		if err != nil {
 			res.SendStatusError(w, http.StatusUnauthorized, err, "SESSION_ERROR")
 			return

@@ -30,4 +30,11 @@ export class CoreStoreService {
     ).toPromise();
   }
 
+  public signIn(username: string, password: string) {
+    return this.authService.singIn(username, password).pipe(
+      tap((user) => {
+        this.store.dispatch(coreActions.signIn({ user }));
+      })
+    );
+  }
 }

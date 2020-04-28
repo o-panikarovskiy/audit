@@ -3,6 +3,7 @@ package middlewares
 import (
 	"audit/src/di"
 	"audit/src/user"
+	"audit/src/utils"
 	"audit/src/utils/res"
 	"context"
 	"net/http"
@@ -14,9 +15,14 @@ func MdlwSessionUser(next http.Handler) http.Handler {
 		service := di.GetUserService()
 
 		sid := GetContext(r).GetSessionID()
+		if sid == "" {
+			res.SendStatusError(w, http.StatusUnauthorized, &utils.AppError{Code: "SESSION_ERROR"})
+			return
+		}
+
 		su, err := service.RestoreSessionUser(sid)
 		if err != nil {
-			res.SendStatusError(w, http.StatusUnauthorized, err, "SESSION_ERROR")
+			res.SendStatusError(w, http.StatusUnauthorized, &utils.AppError{Code: "SESSION_ERROR", Err: err})
 			return
 		}
 

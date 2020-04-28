@@ -1,0 +1,22 @@
+.sign-in {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .form {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .submit {
+    margin-top: 20px;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+}

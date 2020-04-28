@@ -1,15 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 import { AuthRoutingModule } from 'src/app/auth/auth-routing.module';
-import { LoginComponent } from './components/login/login.component';
-
-
+import { SignInComponent } from './components/sign-in/sign-in.component';
 
 @NgModule({
-  declarations: [LoginComponent],
+  declarations: [SignInComponent],
   imports: [
     AuthRoutingModule,
     CommonModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
   ]
 })
 export class AuthModule { }

@@ -15,7 +15,7 @@ import (
 func CreateRouter(cfg *config.AppConfig) http.Handler {
 	router := mux.NewRouter()
 
-	socketHandler := middlewares.MdlwSessionUser(middlewares.MdlwSession(http.HandlerFunc(sockets.HTTPUpgradeHandler)))
+	socketHandler := middlewares.MdlwSession(middlewares.MdlwSessionUser(http.HandlerFunc(sockets.HTTPUpgradeHandler)))
 
 	api := router.PathPrefix("/api").Subrouter()
 	api.Use(middlewares.MdlwError)
