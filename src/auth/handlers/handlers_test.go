@@ -6,7 +6,7 @@ import (
 	"audit/src/middlewares"
 	"audit/src/sessions/mem"
 	"audit/src/user"
-	"audit/src/user/emailconfirm"
+	"audit/src/user/emailconfirmator"
 	"audit/src/user/testrep"
 	"audit/src/user/userservice"
 	"audit/src/utils"
@@ -32,7 +32,7 @@ func init() {
 	}
 	rep := testrep.NewTestRepository()
 	ms := mem.NewStorage()
-	ec := emailconfirm.NewEmailConfirmService(cfg)
+	ec := emailconfirmator.NewEmailConfirmatorService(cfg)
 	srv := userservice.NewDefaultUserService(rep, ms, ec, cfg)
 
 	deps := &di.ServiceLocator{}

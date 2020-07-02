@@ -4,7 +4,7 @@ import (
 	"audit/src/config"
 	"audit/src/sessions/mem"
 	"audit/src/user"
-	"audit/src/user/emailconfirm"
+	"audit/src/user/emailconfirmator"
 	"audit/src/user/testrep"
 	"audit/src/utils"
 	"testing"
@@ -13,7 +13,7 @@ import (
 var cfg = &config.AppConfig{SessionAgeSec: 60 * 60}
 var rep = testrep.NewTestRepository()
 var ms = mem.NewStorage()
-var ec = emailconfirm.NewEmailConfirmService(cfg)
+var ec = emailconfirmator.NewEmailConfirmatorService(cfg)
 var srv = NewDefaultUserService(rep, ms, ec, cfg)
 
 func TestSignUp(t *testing.T) {

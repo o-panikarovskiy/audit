@@ -8,7 +8,7 @@ import (
 func (r *pgRepository) FindByUsername(email string) (*user.User, error) {
 	text := `SELECT id, 
 								  name, 
-								  (extract(epoch from created)*1000) AS created,
+								  created,
 								  email, 
 								  status, 								
 								  password_hash,

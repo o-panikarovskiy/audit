@@ -7,7 +7,7 @@ import (
 func (r *pgRepository) FindAll() ([]*user.User, error) {
 	text := `SELECT id, 
 								  name, 
-								  (extract(epoch from created)*1000) AS created,
+								  created,
 								  email, 
 								  status, 								
 								  password_hash,
