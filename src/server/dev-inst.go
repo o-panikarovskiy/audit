@@ -4,29 +4,29 @@ import (
 	"audit/src/config"
 	"audit/src/di"
 	"audit/src/sessions/redisses"
-	"audit/src/user/defservice"
 	"audit/src/user/emailconfirm"
 	"audit/src/user/pgrep"
+	"audit/src/user/userservice"
 )
 
 func createDevInstase(cfg *config.AppConfig) *Instance {
-	pgPool, err := createPgxPool(cfg)
+	pgDb, err := openPosgresDB(cfg.PG.ConnectionString)
 	if err != nil {
 		panic(err)
 	}
 
-	pgRepository, err := pgrep.NewRepository(pgPool)
+	pgRepository, err := pgrep.NewRepository(pgDb)
 	if err != nil {
 		panic(err)
 	}
 
-	redisStorage, err := redisses.NewStorage((cfg))
+	redisStorage, err := redisses.NewStorage(cfg)
 	if err != nil {
 		panic(err)
 	}
 
 	emailConfirmator := emailconfirm.NewEmailConfirmService(cfg)
-	userService := defservice.NewDefaultUserService(pgRepository, redisStorage, emailConfirmator, cfg)
+	userService := userservice.NewDefaultUserService(pgRepository, redisStorage, emailConfirmator, cfg)
 
 	deps := &di.ServiceLocator{}
 	deps.Register(cfg)

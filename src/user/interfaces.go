@@ -23,15 +23,13 @@ type IRepository interface {
 
 // IService user bussines logic interface
 type IService interface {
-	IReader
-	IWriter
+	IRepository
 	SignUp(username string, password string) (string, string, error)
 	SignOut(user *User) error
 	EndSignUp(confirmID string, confirmValue string) (*User, string, error)
 	Auth(email string, password string) (*User, string, error)
 	RestoreSessionUser(sid string) (*User, error)
 	CheckAuthSession(sid string) (*User, error)
-	GetRepo() IRepository
 	GetSessionStorage() sessions.IStorage
 }
 

@@ -1,4 +1,4 @@
-package defservice
+package userservice
 
 import (
 	"audit/src/config"
@@ -71,10 +71,6 @@ func (s *userService) Store(user *user.User) (*user.User, error) {
 
 func (s *userService) Update(user *user.User) (*user.User, error) {
 	return s.repo.Update(user)
-}
-
-func (s *userService) GetRepo() user.IRepository {
-	return s.repo
 }
 
 func (s *userService) GetSessionStorage() sessions.IStorage {

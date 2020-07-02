@@ -1,4 +1,4 @@
-package defservice
+package userservice
 
 import (
 	"audit/src/config"
@@ -166,13 +166,6 @@ func TestRestoreSessionUser(t *testing.T) {
 func TestGetSessionStorage(t *testing.T) {
 	t.Run("must be equal", func(t *testing.T) {
 		if ms != srv.GetSessionStorage() {
-			t.Fail()
-		}
-	})
-}
-func TestGetRepo(t *testing.T) {
-	t.Run("must be equal", func(t *testing.T) {
-		if rep != srv.GetRepo() {
 			t.Fail()
 		}
 	})
