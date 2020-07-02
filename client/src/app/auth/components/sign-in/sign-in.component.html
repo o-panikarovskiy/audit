@@ -1,0 +1,49 @@
+<div class="auth">
+  <form class="content"
+        novalidate=""
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()">
+    <div class="auth-title full-width">
+      <h1 class="title">
+        Sign in</h1>
+    </div>
+    <div class="full-width">
+      <mat-form-field class="full-width">
+        <mat-label>Username</mat-label>
+        <input matInput
+               maxlength="255"
+               autocomplete="username"
+               placeholder="Username"
+               formControlName="username">
+      </mat-form-field>
+      <mat-error *ngIf="isSubmitted && form.controls.username.hasError('required')">
+        Username is <strong>required</strong>
+      </mat-error>
+    </div>
+    <div class="full-width">
+      <mat-form-field class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput
+               type="password"
+               maxlength="255"
+               autocomplete="current-password"
+               placeholder="Password"
+               formControlName="password">
+      </mat-form-field>
+      <mat-error *ngIf="isSubmitted && form.controls.password.hasError('required')">
+        Password is <strong>required</strong>
+      </mat-error>
+      <mat-error *ngIf="serverError">
+        {{serverError}}
+      </mat-error>
+    </div>
+    <div>
+      <a [routerLink]="['../','sign-up']">Don't have login? Sign up!</a>
+    </div>
+    <button class="submit"
+            type="submit"
+            mat-raised-button
+            [disabled]="isSending"
+            color="primary">Sign in</button>
+  </form>
+</div>

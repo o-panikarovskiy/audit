@@ -1,7 +1,0 @@
-{
-    "port": 8080,
-    "env": "test",
-    "gracefulTimeout": 15,
-    "staticDir": "./client/dist",
-    "logRequestAfterMs": 100
-}

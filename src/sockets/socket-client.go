@@ -3,6 +3,7 @@ package sockets
 // ISocketClient interface
 type ISocketClient interface {
 	GetID() string
+	GetUserID() string
 	Close() error
 	SendMessage(*SocketMessage) error
 	WriteJSON(string, interface{}) error

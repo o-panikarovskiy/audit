@@ -1,0 +1,93 @@
+<div class="auth">
+  <ng-container *ngIf="isSuccess; then success; else signup"></ng-container>
+</div>
+
+<ng-template #signup>
+  <form class="content"
+        novalidate=""
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()">
+    <div class="auth-title full-width">
+      <h1 class="title">
+        Sign up</h1>
+    </div>
+
+    <div class="full-width">
+      <mat-form-field class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput
+               maxlength="255"
+               autocomplete="email"
+               placeholder="Email"
+               formControlName="email">
+      </mat-form-field>
+      <mat-error *ngIf="isSubmitted && form.controls.email.hasError('required')">
+        Email is <strong>required</strong>
+      </mat-error>
+      <mat-error *ngIf="isSubmitted && form.controls.email.hasError('email')">
+        Email is <strong>not valid email</strong>
+      </mat-error>
+    </div>
+    <div class="full-width">
+      <mat-form-field class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput
+               maxlength="255"
+               type="password"
+               autocomplete="new-password"
+               placeholder="Password"
+               formControlName="password">
+      </mat-form-field>
+      <mat-error *ngIf="isSubmitted && form.controls.password.hasError('required')">
+        Password is <strong>required</strong>
+      </mat-error>
+      <mat-error *ngIf="isSubmitted && form.controls.password.hasError('minlength')">
+        Your password must contain <strong>at least 8 characters</strong>
+      </mat-error>
+    </div>
+    <div class="full-width">
+      <mat-form-field class="full-width">
+        <mat-label>Verify</mat-label>
+        <input matInput
+               maxlength="255"
+               type="password"
+               autocomplete="new-password"
+               placeholder="Verify password"
+               formControlName="passwordVerify">
+      </mat-form-field>
+      <mat-error *ngIf="isSubmitted && form.controls.passwordVerify.hasError('required')">
+        Verify password field is <strong>required</strong>
+      </mat-error>
+      <mat-error *ngIf="isSubmitted && form.controls.passwordVerify.hasError('minlength')">
+        Your password must contain <strong>at least 8 characters</strong>
+      </mat-error>
+      <mat-error *ngIf="isSubmitted && form.hasError('passwordVerification')">
+        Your passwords <strong>doesn't match</strong>
+      </mat-error>
+      <mat-error *ngIf="serverError">
+        {{serverError}}
+      </mat-error>
+    </div>
+    <div>
+      <a [routerLink]="['../','sign-in']">Already have login? Sign in!</a>
+    </div>
+    <button class="submit"
+            type="submit"
+            mat-raised-button
+            [disabled]="isSending"
+            color="primary">Sign up</button>
+  </form>
+</ng-template>
+
+
+<ng-template #success>
+  <div class="content">
+    <div class="auth-title full-width">
+      <h1 class="title">
+        Please verify your email</h1>
+      <div class="subtitle">An email has been sent to your email address with a link to verify your email
+        address.
+      </div>
+    </div>
+  </div>
+</ng-template>

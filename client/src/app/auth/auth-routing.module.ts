@@ -1,16 +1,26 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from 'src/app/auth/components/login/login.component';
+import { SignInComponent } from 'src/app/auth/components/sign-in/sign-in.component';
+import { SignUpConfirmComponent } from 'src/app/auth/components/sign-up-confirm/sign-up-confirm.component';
+import { SignUpComponent } from 'src/app/auth/components/sign-up/sign-up.component';
 
 
 const routes: Routes = [
   {
-    path: 'login',
-    component: LoginComponent
+    path: 'sign-in',
+    component: SignInComponent
+  },
+  {
+    path: 'sign-up',
+    component: SignUpComponent
+  },
+  {
+    path: 'confirm/:token',
+    component: SignUpConfirmComponent
   },
   {
     path: '**',
-    redirectTo: 'login'
+    redirectTo: 'sign-in'
   }
 ];
 

@@ -2,8 +2,6 @@ package server
 
 import (
 	"audit/src/config"
-	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -15,30 +13,22 @@ type Instance struct {
 
 // NewInstance create new Instance
 func NewInstance(cfg *config.AppConfig) *Instance {
-	inst := &Instance{
-		cfg:        cfg,
-		httpServer: createHTTPServer(cfg),
+	if cfg.IsDev() {
+		return createDevInstase(cfg)
 	}
-
-	return inst
+	return nil
 }
 
 // Run instanse
 func (inst *Instance) Run() {
-	initEntities(inst.cfg)
-	addSocketEventListeners(inst.cfg)
-
-	// Run our server in a goroutine so that it doesn't block.
-	go func() {
-		log.Println(fmt.Sprintf("Server start listening on %d port", inst.cfg.Port))
-		if err := inst.httpServer.ListenAndServe(); err != nil {
-			panic(err)
-		}
-	}()
+	if inst.httpServer != nil {
+		go runHTTPServer(inst.httpServer)
+	}
 }
 
 // Stop instanse
 func (inst *Instance) Stop() {
-	shutDownEntities(inst.cfg)
-	shutdownHTTPServer(inst.httpServer, inst.cfg)
+	if inst.httpServer != nil {
+		shutdownHTTPServer(inst.httpServer, inst.cfg)
+	}
 }

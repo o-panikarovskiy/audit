@@ -1,0 +1,43 @@
+<div class="auth">
+  <ng-container *ngIf="isLoading; then loading; else loaded"></ng-container>
+</div>
+
+<ng-template #loading>
+  <div class="content loading">
+    <div class="auth-title full-width">
+      <h1>Loading...</h1>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #loaded>
+  <ng-container *ngIf="!isOK; then error; else ok"></ng-container>
+</ng-template>
+
+
+<ng-template #ok>
+  <div class="content">
+    <div class="auth-title full-width">
+      <h1>Great, the email address is now verified!</h1>
+    </div>
+    <div>
+      <a [routerLink]="['/home']">OK</a>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #error>
+  <div class="content">
+    <div class="auth-title full-width">
+      <h1>Unable to verify the email</h1>
+    </div>
+    <div class="auth-subtitle">
+      Sorry, this verification link is no loner valid due to one of the following reasons:
+      - It has already been verified
+      - It has expired or has been cancelled.
+    </div>
+    <div>
+      <a [routerLink]="['../','sign-up']">Sign up</a>
+    </div>
+  </div>
+</ng-template>

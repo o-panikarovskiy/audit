@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"net/http"
-
 	"github.com/go-playground/validator/v10"
 )
 
@@ -21,7 +19,6 @@ func ValidateModel(model interface{}) error {
 	if err != nil {
 		return &AppError{
 			Err:     err,
-			Status:  http.StatusBadRequest,
 			Code:    "INVALID_REQUEST_MODEL",
 			Message: "Invalid request model",
 			Details: getValidationErrors(err),

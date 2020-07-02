@@ -5,7 +5,7 @@ import (
 
 	"audit/src/auth"
 	"audit/src/config"
-	"audit/src/context"
+	"audit/src/middlewares"
 	"audit/src/sockets"
 
 	"github.com/gorilla/mux"
@@ -15,16 +15,17 @@ import (
 func CreateRouter(cfg *config.AppConfig) http.Handler {
 	router := mux.NewRouter()
 
+	socketHandler := middlewares.MdlwSession(middlewares.MdlwSessionUser(http.HandlerFunc(sockets.HTTPUpgradeHandler)))
+
 	api := router.PathPrefix("/api").Subrouter()
+	api.Use(middlewares.MdlwError)
+	api.Use(middlewares.MdlwLog)
+	api.Use(middlewares.MdlwTypedContext)
+
+	api.Handle("/ws", socketHandler).Methods("GET")
 	api.HandleFunc("/health", health).Methods("GET")
-	api.HandleFunc("/ws", sockets.HTTPUpgradeHandler).Methods("GET")
 
-	api.Use(WithError)
-	api.Use(context.WithTypedContext)
-	api.Use(WithJSON)
-	api.Use(WithLog)
-
-	setSubRoutes(api, "/auth", auth.GetRoutes())
+	auth.GetRoutes(api)
 
 	api.NotFoundHandler = http.HandlerFunc(notFound)
 	api.MethodNotAllowedHandler = http.HandlerFunc(notAllowed)

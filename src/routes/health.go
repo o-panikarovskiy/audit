@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"audit/src/utils"
+	"audit/src/utils/res"
 	"net/http"
 )
 
 func health(w http.ResponseWriter, r *http.Request) {
-	utils.ToJSON(w, http.StatusOK, utils.StringMap{"ok": true})
+	res.SendJSON(w, http.StatusOK, map[string]interface{}{"ok": true})
 }

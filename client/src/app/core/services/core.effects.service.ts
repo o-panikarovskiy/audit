@@ -13,15 +13,25 @@ export class CoreEffects {
     private readonly ws: WebSocketService
   ) { }
 
-  public initStore$ = createEffect(() =>
+  public signIn$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(coreActions.initStore),
+      ofType(coreActions.initStore, coreActions.signIn),
       tap(({ user }) => {
         if (user) {
           this.onUserLogin(user);
         } else {
           this.onUserLogout();
         }
+      })
+    ),
+    { dispatch: false }
+  );
+
+  public signOut$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(coreActions.signOut),
+      tap(() => {
+        this.onUserLogout();
       })
     ),
     { dispatch: false }

@@ -8,7 +8,6 @@ import { AppComponent } from 'src/app/app.component';
 import { metaReducers } from 'src/app/app.store';
 import { CoreModule } from 'src/app/core/core.module';
 
-
 @NgModule({
   declarations: [
     AppComponent

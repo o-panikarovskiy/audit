@@ -8,11 +8,15 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
+    redirectTo: 'home'
+  },
+  {
+    path: 'home',
     loadChildren: () => import('./home/home.module').then(mod => mod.HomeModule),
     canLoad: [RouteGuard],
     data: {
       accessLevel: AccessLevel.User,
-      redirect: (router: Router) => { router.navigate(['auth', 'login']); }
+      redirect: (router: Router) => { router.navigate(['auth', 'sign-in']); }
     }
   },
   {
