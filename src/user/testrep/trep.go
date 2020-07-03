@@ -4,6 +4,7 @@ import (
 	"audit/src/user"
 	"audit/src/utils"
 	"log"
+	"time"
 )
 
 type testRepo struct {
@@ -45,6 +46,7 @@ func (r *testRepo) FindAll() ([]*user.User, error) {
 
 func (r *testRepo) Store(user *user.User) (*user.User, error) {
 	user.ID = utils.CreateGUID()
+	user.Created = time.Now()
 	r.users = append(r.users, user)
 	return user, nil
 }

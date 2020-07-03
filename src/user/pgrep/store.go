@@ -1,6 +1,9 @@
 package pgrep
 
-import "audit/src/user"
+import (
+	"audit/src/user"
+	"time"
+)
 
 func (r *pgRepository) Store(u *user.User) (*user.User, error) {
 	text := `INSERT INTO public.users(					                              
@@ -12,14 +15,17 @@ func (r *pgRepository) Store(u *user.User) (*user.User, error) {
 																		role
 					) 
 					VALUES ($1, $2, $3, $4, $5, $6)
-					RETURNING id;`
+					RETURNING id, created;`
 
-	lastInsertID := ""
-	err := r.db.QueryRow(text, u.Name, u.Email, u.Status, u.PasswordHash, u.PasswordSalt, u.Role).Scan(&lastInsertID)
+	var lastInsertID string
+	var created time.Time
+	err := r.db.QueryRow(text, u.Name, u.Email, u.Status, u.PasswordHash, u.PasswordSalt, u.Role).Scan(&lastInsertID, &created)
 	if err != nil {
 		return nil, err
 	}
 
 	u.ID = lastInsertID
+	u.Created = created
+
 	return u, nil
 }
